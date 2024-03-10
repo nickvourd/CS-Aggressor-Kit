@@ -1,2 +1,2 @@
 # Aggressor-Kit
-Homemade Aggressor scripts kit
+Homemade aggressor scripts kit
