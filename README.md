@@ -16,7 +16,7 @@ These CNA files will notify you via the `Slack`/`Discord`/`Teams` applications w
 
 :information_source: Some CNA files are compatible with both Windows and Linux operating systems.
 
-The following table illustrates the CNA files included in this project:
+The following table illustrates the CNA files included in this Alert section:
 
 | Name | OS | App | Description |
 |:-----------:|:-----------:|:-----------:|:-----------:|
