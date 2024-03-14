@@ -4,7 +4,19 @@ Homemade aggressor scripts kit for Cobalt Strike
 ## Table of Contents
 - [CS-Aggressor-Kit](#cs-aggressor-kit)
   - [Table of Contents](#table-of-contents)
+  - [Summary](#summary)
   - [Alert](#alert)
+
+## Summary
+
+The following table illustrates the CNA files included in this project:
+
+| Section | Name | Description |
+|:-----------:|:-----------:|:-----------:|
+| Alert |[slack-alerts_linux.cna](/Alert/Slack/slack-alerts_linux.cna)| Slack CNA file for Linux CS client |
+| Alert |[slack-alerts_windows.cna](/Alert/Slack/slack-alerts_windows.cna)| Slack CNA file for Windows CS client |
+| Alert |[discord-alerts_linux.cna](/Alert/Discord/discord-alerts_linux.cna)| Discord CNA file for Linux CS Client |
+| Alert |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Teams CNA file for Linux CS Client |
 
 ## Alert
 
@@ -21,7 +33,7 @@ These CNA files will notify you via the `Slack`/`Discord`/`Teams` applications w
 
 :information_source: Some CNA files are compatible with both Windows and Linux operating systems.
 
-The following table illustrates the CNA files included in this Alert section:
+The following table illustrates the CNA files included in the Alert section:
 
 | Name | OS | App | Description |
 |:-----------:|:-----------:|:-----------:|:-----------:|
