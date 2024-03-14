@@ -53,3 +53,37 @@ The following table illustrates the CNA files included in the Alert section:
 ### Setup Teams Webhooks
 
 :information_source: To set up a Microsoft Teams webhook, you can follow these guides provided on [Microsoft website](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook?tabs=newteams%2Cdotnet).
+
+## Example Alert CNA Output
+
+#### New incoming Beacon notification example (Slack):
+
+![New-Beacon-Example](/Pictures/New-Beacon-Example1.png)
+
+#### New Web hit notification example (Discord):
+
+![Web-Hit-Example](/Pictures/Web-Hit-Example1.png)
+
+#### New CS client connects to the teamserver notification example (Slack):
+
+![New-CS-Client-Connect-Example](/Pictures/New-CS-Client-Connect-Example1.png)
+
+#### CS Client disconnects from the teamserver notification example (Discord):
+
+![CS-Client-Disconnect](/Pictures/CS-Client-Disconnect.png)
+
+#### CS Client hosts a file or clones a website notification example (Slack):
+
+![Host-File-Clone-Site](/Pictures/Host-File-Clone-Site.png)
+
+#### CS client posts something in the event log (Discord):
+
+![New-message-CS](/Pictures/New-message-CS.png)
+
+#### New credentials come in from keylogging (Discord):
+
+![New-credentials-come-in](/Pictures/Keystrokes-Received.png)
+
+#### New screenshot is taken from Cobalt Strike (Slack):
+
+![New-Screesnhot-taken](/Pictures/New-Screesnhot-taken.png)
