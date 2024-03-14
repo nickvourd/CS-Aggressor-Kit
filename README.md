@@ -1,6 +1,11 @@
 # CS-Aggressor-Kit
 Homemade aggressor scripts kit for Cobalt Strike
 
+## Table of Contents
+- [CS-Aggressor-Kit](#cs-aggressor-kit)
+  - [Table of Contents](#table-of-contents)
+  - [Alert](#alert)
+
 ## Alert
 
 These CNA files will notify you via the `Slack`/`Discord`/`Teams` applications when:
