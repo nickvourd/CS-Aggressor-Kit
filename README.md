@@ -9,7 +9,7 @@ Homemade aggressor scripts kit for Cobalt Strike
 
 ## Summary
 
-The following table illustrates the CNA files included in this project:
+The following table illustrates all the CNA files included in this project:
 
 | Section | Name | Description |
 |:-----------:|:-----------:|:-----------:|
