@@ -18,6 +18,7 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[discord-alerts_linux.cna](/Alert/Discord/discord-alerts_linux.cna)| Discord CNA file for Linux CS Client |
 | Alert |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Teams CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Mattermost CNA file for Linux CS Client |
+| Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
 
 ## Alert
 
@@ -43,6 +44,7 @@ The following table illustrates the CNA files included in the Alert section:
 |[discord-alerts_linux.cna](/Alert/Discord/discord-alerts_linux.cna)| Linux | Discord | Discord CNA file for Linux CS Client |
 |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Linux | Teams | Teams CNA file for Linux CS Client |
 |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Linux | Mattermost | Mattermost CNA file for Linux CS Client |
+|[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Windows | Mattermost | Mattermost CNA file for Windows CS Client |
 
 ### Setup Slack and Webhooks
 
