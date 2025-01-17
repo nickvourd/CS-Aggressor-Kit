@@ -20,8 +20,8 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Teams CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Mattermost CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
-| Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | Change Beacon tab name format from default to "<username>@<hostname> (<pid>)" |
-| Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | Change Beacon tab name format from default to "<username>@<hostname> (<pid>)", for admin's beacon the color is red, for user's beacon the color is green |
+| Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | Changes Beacon tab name format from default to "<username>@<hostname> (<pid>)" |
+| Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | Changes Beacon tab name format from default to "<username>@<hostname> (<pid>)", for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | Makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | Enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: cd -) |
 
