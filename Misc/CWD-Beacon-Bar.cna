@@ -1,0 +1,136 @@
+#Author: @nickvourd
+#Inspired by https://github.com/mgeeky/cobalt-arsenal of @mariuszbit
+#Original code: https://github.com/mgeeky/cobalt-arsenal/blob/master/cwd-in-beacon-status-bar.cna
+#Global state for tracking beacon directories
+%BEACON_WORKING_DIRS = %();
+
+# Initialize current directory when a new beacon connects
+on beacon_initial {
+    local('$beaconId');
+    $beaconId = $1;
+    %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = bpwd($1);
+}
+
+set BEACON_SBAR_LEFT { 
+    local('$targetHost $targetUser $processId $systemArch $workingDir $beaconArch $hostColor');
+    $beaconId = $1;
+    $targetHost = $2["computer"];
+    $targetUser = $2["user"];
+    $processId = $2["pid"];
+    $systemArch = $2["arch"];
+    $beaconArch = barch($beaconId);
+    
+    # Set hostname color based on admin status
+    if (-isadmin $beaconId) {
+        $hostColor = "\c4"; # Red for admin
+    } else {
+        $hostColor = "\c3"; # Green for non-admin
+    }
+    
+    # Get current directory, fallback to bpwd if not set
+    $workingDir = %BEACON_WORKING_DIRS[$beaconId]['workingDir'];
+    if ($workingDir is $null) {
+        $workingDir = bpwd($beaconId);
+        %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = $workingDir;
+    }
+
+    return "[" . $hostColor . $targetHost . "\o] - $systemArch | $targetUser | $processId - $beaconArch | \c2 $+ $workingDir $+ \o";
+}
+
+set BEACON_SBAR_RIGHT { 
+    local('$beaconNote $lastSeen');
+    $beaconNote = $2["note"];
+    $lastSeen = $2["lastf"];
+
+    return "\c6 $beaconNote \cE(last: $+ $[5]lastSeen $+ )\o";
+}
+
+on beacon_tasked {
+    local('$newWorkingDir $dirSeparator');
+    $beaconId = $1;
+
+    if('cd *' iswm $2) {
+        $newWorkingDir = substr($2, strlen("cd "));
+        $dirSeparator = iff(binfo($beaconId, "os") eq "Windows", "\\", "/");
+
+        if($newWorkingDir eq "..") {
+            $newWorkingDir = substr(%BEACON_WORKING_DIRS[$beaconId]['workingDir'], 0, lindexOf(%BEACON_WORKING_DIRS[$beaconId]['workingDir'], $dirSeparator));
+            
+            if($newWorkingDir eq "..") {
+                return "\cC[*]\o $2";
+            }
+        }
+        else if($newWorkingDir eq ".") {
+            return "\cC[*]\o $2";
+        }
+        else if((strlen($newWorkingDir) >= 2) && (charAt($newWorkingDir, 1) ne ":")) {
+            # Handle relative path
+            $newWorkingDir = %BEACON_WORKING_DIRS[$beaconId]['workingDir'] . $dirSeparator . $newWorkingDir;
+        }
+
+        %BEACON_WORKING_DIRS[$beaconId]['previousDir'] = %BEACON_WORKING_DIRS[$beaconId]['workingDir'];
+        %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = $newWorkingDir;
+
+        return "\cC[*]\o $2";
+    }
+}
+
+set BEACON_OUTPUT_ALT {
+    local('$newWorkingDir');
+    $beaconId = $1;
+
+    if($2 ismatch 'Current directory is (.+)') {
+        $newWorkingDir = matched()[0];
+        %BEACON_WORKING_DIRS[$beaconId]['previousDir'] = %BEACON_WORKING_DIRS[$beaconId]['workingDir'];
+        %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = $newWorkingDir;
+        return "\cC[*]\o Current directory is \cC" . $newWorkingDir . "\o\n";
+    }
+
+    return "\cC[*]\o $2\n";
+}
+
+on beacon_input {
+    $beaconId = $1;
+    if (["$3" trim] eq "ls") {
+        %BEACON_WORKING_DIRS[$beaconId]['updateDirFromLs'] = 1;
+    }
+}
+
+on beacon_output_ls {
+    local('$lsOutputDir');
+    $beaconId = $1;
+
+    if(%BEACON_WORKING_DIRS[$beaconId]['updateDirFromLs'] == 1) {
+        $lsOutputDir = split("\n", ["$2" trim])[0];
+        if(right($lsOutputDir, 2) eq "\\*") {
+            $lsOutputDir = substr($lsOutputDir, 0, -2);
+        }
+        %BEACON_WORKING_DIRS[$beaconId]['previousDir'] = %BEACON_WORKING_DIRS[$beaconId]['workingDir'];
+        %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = $lsOutputDir;
+        %BEACON_WORKING_DIRS[$beaconId]['updateDirFromLs'] = 0;
+    }
+}
+
+on beacons {
+    if(%BEACON_WORKING_DIRS is $null) {
+        %BEACON_WORKING_DIRS = %();
+    }
+
+    foreach $beaconId ($1) {
+        if(iff($beaconId in keys(%BEACON_WORKING_DIRS), "true", $null)) {
+            %BEACON_WORKING_DIRS[$beaconId] = %();
+            # Initialize working directory
+            %BEACON_WORKING_DIRS[$beaconId]['workingDir'] = bpwd($beaconId);
+        }
+    }
+}
+
+alias cd {
+    $beaconId = $1;
+    if(($2 eq "-") && (strlen(%BEACON_WORKING_DIRS[$beaconId]['previousDir']) > 0)) {
+        bcd($beaconId, %BEACON_WORKING_DIRS[$beaconId]['previousDir']);
+        return;
+    }
+
+    bcd($beaconId, $2);
+}
