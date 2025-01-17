@@ -22,7 +22,7 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
 | Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | Change Beacon tab name format from default to "<username>@<hostname> (<pid>)" |
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | Change Beacon tab name format from default to "<username>@<hostname> (<pid>)", for admin's beacon the color is red, for user's beacon the color is green |
-| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | Makes all CS tabs bold |
+| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | Makes all CS client tabs bold |
 
 ## Alert
 
