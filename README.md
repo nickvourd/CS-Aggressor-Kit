@@ -6,7 +6,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
   - [Table of Contents](#table-of-contents)
   - [Summary](#summary)
   - [Alert](#alert)
-  - Misc
+  - [Misc](#misc)
 
 ## Summary
 
@@ -100,3 +100,5 @@ The following table illustrates the CNA files included in the Alert section:
 #### New screenshot is taken from Cobalt Strike (Slack):
 
 ![New-Screesnhot-taken](/Pictures/New-Screesnhot-taken.png)
+
+## Misc
