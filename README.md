@@ -1,5 +1,5 @@
 # CS-Aggressor-Kit
-Homemade aggressor scripts kit for Cobalt Strike
+Homemade Aggressor scripts kit for Cobalt Strike
 
 ## Table of Contents
 - [CS-Aggressor-Kit](#cs-aggressor-kit)
