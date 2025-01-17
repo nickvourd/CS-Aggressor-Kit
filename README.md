@@ -6,6 +6,7 @@ Homemade aggressor scripts kit for Cobalt Strike
   - [Table of Contents](#table-of-contents)
   - [Summary](#summary)
   - [Alert](#alert)
+  - Misc
 
 ## Summary
 
