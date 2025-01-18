@@ -131,7 +131,7 @@ The following table illustrates the CNA files included in the Auto section:
 
 ![Diagram-3](/Pictures/Diagram-3.png)
 
-**Digram 4**: The next day, when the operator (with the Cobalt Strike client without the CNA file) connects to the Team Server, the always-open client with the loaded CNA file ([auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna)) will detect the new user connection. It will then automatically set the sleep time to the predefined value specified in the CNA file.
+**Diagram 4**: The next day, when the operator (with the Cobalt Strike client without the CNA file) connects to the Team Server, the always-open client with the loaded CNA file ([auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna)) will detect the new user connection. It will then automatically set the sleep time to the predefined value specified in the CNA file.
 
 ![Diagram-4](/Pictures/Diagram-4.png)
 
