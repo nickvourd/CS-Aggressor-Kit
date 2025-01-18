@@ -6,6 +6,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
   - [Table of Contents](#table-of-contents)
   - [Summary](#summary)
   - [Alert](#alert)
+  - [Auto](#auto)
   - [Misc](#misc)
 
 ## Summary
@@ -20,6 +21,8 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Teams CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Mattermost CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
+| Auto | [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times, ensuring the sleep time is configured even if the Cobalt Strike client is closed or you forget to set it while away. |
+| Auto | [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times. |
 | Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
@@ -100,6 +103,54 @@ The following table illustrates the CNA files included in the Alert section:
 #### New screenshot is taken from Cobalt Strike (Slack):
 
 ![New-Screesnhot-taken](/Pictures/New-Screesnhot-taken.png)
+
+## Auto
+
+These CNA files automatically configure certain actions in Cobalt Strike.
+
+The following table illustrates the CNA files included in the Auto section:
+
+| [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times. |
+| [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times. |
+
+### How Auto Sleep Works
+
+**Diagram 1**: The two CS client are connected to the Team server.
+
+#################                       ###############################################
+|  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
+#################                       ###############################################
+    ^
+    |
+    |
+    |
+connected
+    |
+    |
+    |
+    |
+#####################################
+| CS Client (Without the CNA file)  |
+#####################################
+
+**Diagram 2**: At the end of the day's engagement tasks, the operators decide to stop the engagement. One operator, using a Cobalt Strike client without the CNA file, disconnects from the teamserver, while the other operator ensures their Cobalt Strike client with the CNA file remains open.
+
+#################                       ###############################################
+|  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
+#################                       ###############################################
+    ^
+    x
+    x
+    x
+disconnected
+    x
+    x
+    x
+    x
+#####################################
+| CS Client (Without the CNA file)  |
+#####################################
+
 
 ## Misc
 
