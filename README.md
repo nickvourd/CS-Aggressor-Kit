@@ -22,7 +22,7 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
 | Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
-| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA makes all CS client tabs bold |
+| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
 
 ## Alert
@@ -111,7 +111,7 @@ The following table illustrates the CNA files included in the Misc section:
 |:-----------:|:-----------:|
 | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
 | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
-| [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA makes all CS client tabs bold |
+| [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
 
 ### Beacon Name Tab
@@ -128,7 +128,7 @@ This CNA file modifies the Beacon tab name format from the default to `username`
 
 ### CS All tabs Bold
 
-This CNA makes all Cobalt Strike client tabs bold.
+This CNA file makes all Cobalt Strike client tabs bold.
 
 ![CS-All-Tabs-Bold-Example](/Pictures/CS-All-Tabs-Bold-Example.png)
 
