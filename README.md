@@ -119,7 +119,7 @@ The following table illustrates the CNA files included in the Auto section:
 
 **Diagram 1**: The two CS client are connected to the Team server.
 
-![Diagram1](/Pictures/Diagram-1.png)
+![Diagram-1](/Pictures/Diagram-1.png)
 
 #################                       ###############################################
 |  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
