@@ -117,44 +117,38 @@ The following table illustrates the CNA files included in the Auto section:
 
 ### How Auto Sleep Works
 
-**Diagram 1**: The two CS client are connected to the Team server.
+**Diagram 1**: The two Cobalt Srike clients are connected to the Team server.
 
 ![Diagram-1](/Pictures/Diagram-1.png)
 
-#################                       ###############################################
-|  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
-#################                       ###############################################
-    ^
-    |
-    |
-    |
-connected
-    |
-    |
-    |
-    |
-#####################################
-| CS Client (Without the CNA file)  |
-#####################################
-
 **Diagram 2**: At the end of the day's engagement tasks, the operators decide to stop the engagement. One operator, using a Cobalt Strike client without the CNA file, disconnects from the teamserver, while the other operator ensures their Cobalt Strike client with the CNA file remains open.
 
-#################                       ###############################################
-|  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
-#################                       ###############################################
-    ^
-    x
-    x
-    x
-disconnected
-    x
-    x
-    x
-    x
-#####################################
-| CS Client (Without the CNA file)  |
-#####################################
+![Diagram-2](/Pictures/Diagram-2.png)
 
+**Diagram 3**: The Cobalt Strike client with the CNA file will detect the user disconnection event and automatically adjust the sleep time to the predefined value specified in the CNA file.
+
+![Diagram-3](/Pictures/Diagram-3.png)
+
+**Digram 4**: The next day, when the operator (with the Cobalt Strike client without the CNA file) connects to the Team Server, the always-open client with the loaded CNA file ([auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna)) will detect the new user connection. It will then automatically set the sleep time to the predefined value specified in the CNA file.
+
+![Diagram-4](/Pictures/Diagram-4.png)
+
+################# <-----connected-----  ###############################################
+|  TEAMSERVER   |                       |  CS Client (Always Open with the CNA file)  |
+#################                       ###############################################
+    ^     ^                                    |           ^
+    |     |                                    |           ^
+    |     |____Set Auto Sleep (From CNA) ______|           ^
+    |                                                      ^
+    |                                                      ^
+connected                                          connection event
+    |                                                      ^
+    |                                                      ^
+    |                                                      ^
+    |                                                      ^
+#####################################                      ^ 
+| CS Client (Without the CNA file)  | >>>>>>>>>>>>>>>>>>>>>>
+#####################################
 
 ## Misc
 
