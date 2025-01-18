@@ -144,4 +144,4 @@ Additionally, improves the 'cd' command to support restoring the previous direct
 
 Finally, when you have an Administrator's Beacon, the hostname of the target machine changes from the CNA's default green (used for standard users) to red.
 
-![CWD-Beacon-Bar-Example-3](/Pictures/CWD-Beacon-Bar-Example-3.png)
+![CWD-Beacon-Bar-Example-Admin](/Pictures/CWD-Beacon-Bar-Example-Admin.png)
