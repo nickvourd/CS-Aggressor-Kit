@@ -21,9 +21,9 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Mattermost CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
 | Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
-| Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | Changes Beacon tab name format from default to "username@hostname (pid)", for admin's beacon the color is red, for user's beacon the color is green |
-| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | Makes all CS client tabs bold |
-| Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | Enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: cd -) |
+| Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
+| Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA makes all CS client tabs bold |
+| Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
 
 ## Alert
 
@@ -103,6 +103,45 @@ The following table illustrates the CNA files included in the Alert section:
 
 ## Misc
 
-#### Beacon Name Tab
+These CNA files will configure the output format for various default functionalities of Cobalt Strike.
+
+The following table illustrates the CNA files included in the Misc section:
+
+| Name | Description |
+|:-----------:|:-----------:|
+| [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
+| [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
+| [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA makes all CS client tabs bold |
+| [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
+
+### Beacon Name Tab
 
 This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`).
+
+![Beacon-Tab-Name-Example](/Pictures/Beacon-Tab-Name-Example.png)
+
+### Beacon Name Tab Colors
+
+This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`). For an Administrator's Beacon, the tab color is set to red, while for a standard user's Beacon, the tab color is set to green.
+
+![Beacon-Tab-Name-Colors-Example](/Pictures/Beacon-Tab-Name-Colors-Example.png)
+
+### CS All tabs Bold
+
+This CNA makes all Cobalt Strike client tabs bold.
+
+![CS-All-Tabs-Bold-Example](/Pictures/CS-All-Tabs-Bold-Example.png)
+
+### CWD Beacon Bar
+
+This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path.
+
+![CWD-Beacon-Bar-Example](/Pictures/CWD-Beacon-Bar-Example.png)
+
+Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`).
+
+![CWD-Beacon-Bar-Example-2](/Pictures/CWD-Beacon-Bar-Example-2.png)
+
+Finally, when you have an Administrator's Beacon, the hostname of the target machine changes from the CNA's default green (used for standard users) to red.
+
+![CWD-Beacon-Bar-Example-3](/Pictures/CWD-Beacon-Bar-Example-3.png)
