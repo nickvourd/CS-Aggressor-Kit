@@ -110,12 +110,16 @@ These CNA files automatically configure certain actions in Cobalt Strike.
 
 The following table illustrates the CNA files included in the Auto section:
 
+| Name | Description |
+|:-----------:|:-----------:|
 | [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times. |
 | [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times. |
 
 ### How Auto Sleep Works
 
 **Diagram 1**: The two CS client are connected to the Team server.
+
+![Diagram1](/Pictures/Diagram-1.png)
 
 #################                       ###############################################
 |  TEAMSERVER   |  <-----connected----- |  CS Client (Always Open with the CNA file)  |
