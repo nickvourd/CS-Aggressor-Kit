@@ -102,3 +102,7 @@ The following table illustrates the CNA files included in the Alert section:
 ![New-Screesnhot-taken](/Pictures/New-Screesnhot-taken.png)
 
 ## Misc
+
+#### Beacon Name Tab
+
+This CNA file modifies the Beacon tab name format from the default to "<`username`>@<`hostname`> (<`pid`>)".
