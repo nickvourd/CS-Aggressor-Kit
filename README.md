@@ -126,7 +126,7 @@ This CNA file modifies the Beacon tab name format from the default to `username`
 
 ![Beacon-Tab-Name-Colors-Example](/Pictures/Beacon-Tab-Name-Colors-Example.png)
 
-### CS All tabs Bold
+### CS All Tabs Bold
 
 This CNA file makes all Cobalt Strike client tabs bold.
 
