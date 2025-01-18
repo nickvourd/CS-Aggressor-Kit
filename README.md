@@ -117,11 +117,13 @@ The following table illustrates the CNA files included in the Auto section:
 
 ### How Auto Sleep Works
 
+:info: The two auto-sleep CNA files can be used individually or together, depending on your preferences.
+
 **Diagram 1**: The two Cobalt Srike clients are connected to the Team server.
 
 ![Diagram-1](/Pictures/Diagram-1.png)
 
-**Diagram 2**: At the end of the day's engagement tasks, the operators decide to stop the engagement. One operator, using a Cobalt Strike client without the CNA file, disconnects from the teamserver, while the other operator ensures their Cobalt Strike client with the CNA file remains open.
+**Diagram 2**: At the end of the day's engagement tasks, the operators decide to stop the engagement. One operator, using a Cobalt Strike client without the CNA file, disconnects from the teamserver, while the other operator ensures his/her Cobalt Strike client with the CNA file ([auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna)) remains open.
 
 ![Diagram-2](/Pictures/Diagram-2.png)
 
@@ -132,23 +134,6 @@ The following table illustrates the CNA files included in the Auto section:
 **Digram 4**: The next day, when the operator (with the Cobalt Strike client without the CNA file) connects to the Team Server, the always-open client with the loaded CNA file ([auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna)) will detect the new user connection. It will then automatically set the sleep time to the predefined value specified in the CNA file.
 
 ![Diagram-4](/Pictures/Diagram-4.png)
-
-################# <-----connected-----  ###############################################
-|  TEAMSERVER   |                       |  CS Client (Always Open with the CNA file)  |
-#################                       ###############################################
-    ^     ^                                    |           ^
-    |     |                                    |           ^
-    |     |____Set Auto Sleep (From CNA) ______|           ^
-    |                                                      ^
-    |                                                      ^
-connected                                          connection event
-    |                                                      ^
-    |                                                      ^
-    |                                                      ^
-    |                                                      ^
-#####################################                      ^ 
-| CS Client (Without the CNA file)  | >>>>>>>>>>>>>>>>>>>>>>
-#####################################
 
 ## Misc
 
