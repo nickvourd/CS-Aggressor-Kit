@@ -117,7 +117,7 @@ The following table illustrates the CNA files included in the Auto section:
 
 ### How Auto Sleep Works
 
-:info: The two auto-sleep CNA files can be used individually or together, depending on your preferences.
+:information_source: The two auto-sleep CNA files can be used individually or together, depending on your preferences.
 
 **Diagram 1**: The two Cobalt Srike clients are connected to the Team server.
 
