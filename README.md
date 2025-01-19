@@ -28,7 +28,7 @@ The following table illustrates all the CNA files included in this project:
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
-| Utils | |
+| Utils | [Sonata.cna](/Utils/Sonata.cna) | This CNA file is a port of the [Sonata](https://github.com/nickvourd/Sonata) tool. Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
 
 ## Alert
 
@@ -184,4 +184,16 @@ Finally, when you have an Administrator's Beacon, the hostname of the target mac
 
 ## Utils
 
+These CNA files are used for general micro tasks during operations.
+
+The following table illustrates the CNA files included in the Utils section:
+
+| Name | Description |
+|:-----------:|:-----------:|
+| [Sonata.cna](/Utils/Sonata.cna) | This CNA file is a port of the [Sonata](https://github.com/nickvourd/Sonata) tool. Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
+
 ### Sonata
+
+Hash calculator for local files and strings.
+
+Usage: `Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>`
