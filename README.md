@@ -6,9 +6,21 @@ Homemade Aggressor scripts kit for Cobalt Strike
   - [Table of Contents](#table-of-contents)
   - [Summary](#summary)
   - [Alert](#alert)
+    - [Setup Slack and Webhooks](#setup-slack-and-webhooks)
+    - [Setup Discord and Webhooks](#setup-discord-and-webhooks)
+    - [Setup Teams Webhooks](#setup-teams-webhooks)
+    - [Setup Mattermost Webhooks](#setup-mattermost-webhooks)
+    - [Alert CNA Output Examples](#alert-cna-output-examples)
   - [Auto](#auto)
+    - [How Auto Sleep Works](#how-auto-sleep-works)
   - [Misc](#misc)
+    - [Beacon Name Tab Example](#beacon-name-tab-example)
+    - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
+    - [CS All Tabs Bold Example](#cs-all-tabs-bold-example)
+    - [CWD Beacon Bar Example](#cwd-beacon-bar-example)
   - [Utils](#utils)
+    - [Sonata Examples](#sonata-examples)
+    - [Locate Example](#locate-example)
 
 ## Summary
 
@@ -73,7 +85,7 @@ The following table illustrates the CNA files included in the Alert section:
 
 :information_source: To set up a Mattermost webhook, you can follow these guides provided on [Mattermost website](https://developers.mattermost.com/integrate/webhooks/incoming/).
 
-## Example Alert CNA Output
+### Alert CNA Output Examples
 
 #### New incoming Beacon notification example (Slack):
 
@@ -151,25 +163,25 @@ The following table illustrates the CNA files included in the Misc section:
 | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
 
-### Beacon Name Tab
+### Beacon Name Tab Example
 
 This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`).
 
 ![Beacon-Tab-Name-Example](/Pictures/Beacon-Tab-Name-Example.png)
 
-### Beacon Name Tab Colors
+### Beacon Name Tab Colors Example
 
 This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`). For an Administrator's Beacon, the tab color is set to red, while for a standard user's Beacon, the tab color is set to green.
 
 ![Beacon-Tab-Name-Colors-Example](/Pictures/Beacon-Tab-Name-Colors-Example.png)
 
-### CS All Tabs Bold
+### CS All Tabs Bold Example
 
 This CNA file makes all Cobalt Strike client tabs bold.
 
 ![CS-All-Tabs-Bold-Example](/Pictures/CS-All-Tabs-Bold-Example.png)
 
-### CWD Beacon Bar
+### CWD Beacon Bar Example
 
 This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path.
 
@@ -194,21 +206,21 @@ The following table illustrates the CNA files included in the Utils section:
 | [Sonata.cna](/Utils/Sonata.cna) | This CNA file is a port of the [Sonata](https://github.com/nickvourd/Sonata) tool. Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
 | [locate.cna](/Utils/locate.cna) | This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client |
 
-### Sonata
+### Sonata Examples
 
 Hash calculator for local files and strings.
 
 Usage: `Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>`
 
-#### Sonata File Example
+#### Sonata File 
 
 ![Sonata-Example-1](/Pictures/Sonata-Example-1.png)
 
-#### Sonata String Example
+#### Sonata String
 
 ![Sonata-Example-2](/Pictures/Sonata-Example-2.png)
 
-### Locate
+### Locate Example
 
 This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client
 
