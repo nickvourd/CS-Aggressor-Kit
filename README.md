@@ -208,7 +208,7 @@ Usage: `Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>`
 
 ![Sonata-Example-2](/Pictures/Sonata-Example-2.png)
 
-#### Locate
+### Locate
 
 This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client
 
