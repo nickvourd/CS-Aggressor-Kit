@@ -8,6 +8,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
   - [Alert](#alert)
   - [Auto](#auto)
   - [Misc](#misc)
+  - [Utils](#utils)
 
 ## Summary
 
@@ -27,6 +28,7 @@ The following table illustrates all the CNA files included in this project:
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
+| Utils | |
 
 ## Alert
 
@@ -179,3 +181,7 @@ Additionally, improves the 'cd' command to support restoring the previous direct
 Finally, when you have an Administrator's Beacon, the hostname of the target machine changes from the CNA's default green (used for standard users) to red.
 
 ![CWD-Beacon-Bar-Example-Admin](/Pictures/CWD-Beacon-Bar-Example-Admin.png)
+
+## Utils
+
+### Sonata
