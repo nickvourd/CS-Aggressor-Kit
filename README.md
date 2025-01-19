@@ -197,3 +197,11 @@ The following table illustrates the CNA files included in the Utils section:
 Hash calculator for local files and strings.
 
 Usage: `Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>`
+
+#### Sonata File Example
+
+![Sonata-Example-1](/Pictures/Sonata-Example-1.png)
+
+#### Sonata String Example
+
+![Sonata-Example-2](/Pictures/Sonata-Example-2.png)
