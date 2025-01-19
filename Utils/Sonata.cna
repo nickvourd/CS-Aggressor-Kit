@@ -18,7 +18,7 @@ sub show_banner {
 # Register the Sonata command
 beacon_command_register(
     "Sonata",
-    "Hash calculator for files and strings",
+    "Hash calculator for local files and strings",
     "Usage: Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>"
 );
 
