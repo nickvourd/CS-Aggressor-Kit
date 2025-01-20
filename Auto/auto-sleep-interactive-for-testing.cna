@@ -1,4 +1,4 @@
-# Author: @nickvourd
+#Author: @nickvourd
 
 on beacon_initial {
     local('$bid');

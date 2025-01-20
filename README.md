@@ -21,7 +21,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
     - [Alert CNA Output Examples](#alert-cna-output-examples)
   - [Auto](#auto)
     - [How Auto Sleep Works](#how-auto-sleep-works)
-    - [Auto Sleep Interactive For Testing]
+    - [Auto Sleep Interactive For Testing](#auto-sleep-interactive-for-testing)
   - [Misc](#misc)
     - [Beacon Name Tab Example](#beacon-name-tab-example)
     - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
@@ -45,6 +45,7 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
 | Auto | [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times, ensuring the sleep time is configured even if the Cobalt Strike client is closed or you forget to set it while away. |
 | Auto | [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times. |
+| Auto | [auto-sleep-interactive-for-testing.cna](/Auto/auto-sleep-interactive-for-testing.cna) | This CNA file automatically set beacon sleep to 0 on initial connection |
 | Misc | [Beacon-Name-Tab.cna](/Misc/Beacon-Name-Tab.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`) |
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
@@ -138,6 +139,7 @@ The following table illustrates the CNA files included in the Auto section:
 |:-----------:|:-----------:|
 | [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times. |
 | [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times. |
+| [auto-sleep-interactive-for-testing.cna](/Auto/auto-sleep-interactive-for-testing.cna) | This CNA file automatically set beacon sleep to 0 on initial connection |
 
 ### How Auto Sleep Works
 
@@ -160,6 +162,10 @@ The following table illustrates the CNA files included in the Auto section:
 ![Diagram-4](/Pictures/Diagram-4.png)
 
 ### Auto Sleep Interactive For Testing
+
+This CNA file automatically sets the beacon sleep interval to 0 upon initial connection, which is useful for testing purposes.
+
+![Auto-Sleep-Interactive-Example](/Pictures/Auto-Sleep-Interactive-Example.png)
 
 ## Misc
 
