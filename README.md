@@ -21,6 +21,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
     - [Alert CNA Output Examples](#alert-cna-output-examples)
   - [Auto](#auto)
     - [How Auto Sleep Works](#how-auto-sleep-works)
+    - [Auto Sleep Interactive For Testing]
   - [Misc](#misc)
     - [Beacon Name Tab Example](#beacon-name-tab-example)
     - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
@@ -157,6 +158,8 @@ The following table illustrates the CNA files included in the Auto section:
 **Diagram 4**: The next day, when the operator (with the Cobalt Strike client without the CNA file) connects to the Team Server, the always-open client with the loaded CNA file ([auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna)) will detect the new user connection. It will then automatically set the sleep time to the predefined value specified in the CNA file.
 
 ![Diagram-4](/Pictures/Diagram-4.png)
+
+### Auto Sleep Interactive For Testing
 
 ## Misc
 
