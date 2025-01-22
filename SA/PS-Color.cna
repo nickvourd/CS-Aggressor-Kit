@@ -22,9 +22,9 @@ set BEACON_OUTPUT_PS {
     #$outps .= "\cC[*]\o Process List with process highlighting\n";
 
     $outps .= "\cC[*]\o Process List\n\n";
-    $outps .= "\cC[*]\o This Beacon PID:   \c8 YELLOW ". $bd['pid'] ." \o \n";
-    $outps .= "\cC[*]\o Windows Processes: \c9 GREEN \o \n";
-    $outps .= "\cC[*]\o Security Products: \c4 RED \o \n\n";
+    $outps .= "\cC[*]\o This Beacon PID:\c8 YELLOW\o (\c8". $bd['pid'] ."\o) \n";
+    $outps .= "\cC[*]\o Windows Processes:\c9 GREEN \o \n";
+    $outps .= "\cC[*]\o Security Products:\c4 RED \o \n\n";
     $outps .= " PID   PPID  Name                                   Arch  Session     User\n";
     $outps .= "\cE ---   ----  ----                                   ----  -------     ----\n";
 
