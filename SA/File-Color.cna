@@ -8,11 +8,11 @@ set BEACON_OUTPUT_LS {
 	@results = split("\n", ["$2" trim]);
 
 	# File type categories to be highlighted
-	@executables = @(".exe", ".bat", ".bin", ".com", ".wsf");
-	@system_related = @(".dll", ".bak", ".cab", ".cfg", ".cpl", ".cur", ".dmp", "drv", ".ico", ".ini", ".lnk", ".msi", ".sys", ".tmp");
-	@database = @(".csv", ".dat", ".cab", ".xml", ".log", ".dbf", ".db", ".sql");
-	@txt = @(".txt", ".doc", ".pdf", ".docx", ".odt", ".rtf", ".tex");
-	@program = @(".c", ".cgi", ".cpp", ".cs", ".h", ".jar", ".java", ".php", ".py", ".vb");
+	@executables = @(".exe", ".bat", ".bin", ".com", ".wsf", ".raw");
+	@system_related = @(".dll", ".cab", ".cfg", ".cpl", ".cur", ".dmp", "drv", ".ico", ".ini", ".lnk", ".msi", ".sys", ".tmp", ".config");
+	@database = @(".csv", ".dat", ".cab", ".xml", ".log", ".dbf", ".db", ".sql", ".bak", ".tsv", ".mysql", ".pgsql");
+	@txt = @(".txt", ".doc", ".docx", ".pdf", ".odt", ".rtf", ".tex", ".xls", ".xlsx", ".xlsm", ".xltx", ".xltm", ".xlsb", ".xll", ".wll", ".ppt", ".pptx", ".pptm", ".potx", ".potm", ".ppsx", ".ppsm", ".dot", ".dotx", ".dotm", ".docm", ".ods", ".odp", ".odt", ".ott", ".odg", ".epub", ".mobi", ".xps", ".djvu", ".md", ".rst", ".adoc");
+	@program = @(".c", ".cpp", ".cc", ".cxx", ".h", ".hpp", ".hxx", ".cs", ".csx", ".fs", ".fsx", ".go", ".mod", ".java", ".jar", ".class", ".jsp", ".jspx", ".js", ".jsx", ".mjs", ".ts", ".tsx", ".php", ".phtml", ".php3", ".php4", ".php5", ".py", ".pyc", ".pyd", ".pyo", ".pyw", ".ipynb", ".rb", ".rbw", ".rake", ".gemspec", ".rs", ".rlib", ".swift", ".xcodeproj", ".ps1", ".psm1", ".psd1", ".ps1xml", ".sh", ".bash", ".zsh", ".fish", ".pl", ".pm", ".t", ".pod", ".lua", ".luac", ".kt", ".kts", ".scala", ".sc", ".elm", ".ex", ".exs", ".r", ".rmd", ".hta", ".vbs", ".vba", ".bas", ".asm", ".s", ".nasm", ".d", ".di", ".erl", ".hrl", ".cls", ".apex", ".page", ".component", ".m", ".mm", ".html", ".htm", ".xhtml", ".shtml", ".css", ".scss", ".sass", ".less", ".groovy", ".gvy", ".gy", ".gsh", ".dart", ".dart.js", ".coffee", ".litcoffee", ".f", ".f90", ".f95", ".f03", ".ml", ".mli", ".mll", ".mly", ".hs", ".lhs", ".hsc");
 
 	$cwd = left(shift(@results), -1);	# first entry is the current folder
 
