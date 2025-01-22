@@ -34,12 +34,12 @@ set BEACON_OUTPUT_LS {
 	sort({ return ($1['type'] . lc($1['name'])) cmp ($2['type'] . lc($2['name'])); }, @results);
 
 	$out .= "\cC[*]\o Listing: $cwd $+ \n\n";
-	$out .= "\cC[*]\o Executable files listed in \c9 GREEN \o \n";
-	$out .= "\cC[*]\o System-Related files listed in \cD PURPLE \o \n";
-	$out .= "\cC[*]\o Database files listed in \c8 YELLOW \o \n";
-	$out .= "\cC[*]\o Word Processor and TXT files listed in \c4 RED \o \n";
-	$out .= "\cC[*]\o Program files listed in \cB CYAN \o \n";
-	$out .= "\cC[*]\o Directories listed in \cC BLUE \o \n\n";
+	$out .= "\cC[*]\o Executable files listed in\c9 GREEN \o \n";
+	$out .= "\cC[*]\o System-Related files listed in\cD PURPLE \o \n";
+	$out .= "\cC[*]\o Database files listed in\c8 YELLOW \o \n";
+	$out .= "\cC[*]\o Word Processor and TXT files listed in\c4 RED \o \n";
+	$out .= "\cC[*]\o Program files listed in\cB CYAN \o \n";
+	$out .= "\cC[*]\o Directories listed in\cC BLUE \o \n\n";
 	$out .= " Size     Type    Last Modified         Name\n";   
 	$out .= "\cE ----     ----    -------------         ----\n";
 
