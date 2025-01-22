@@ -228,7 +228,7 @@ The following table illustrates the CNA files included in the SA section:
 | [File-Color.cna](/SA/File-Color.cna) | This CNA file outputs files in a colorful format for file hunting |
 | [PS-Color.cna](/SA/PS-Color.cna) | This CNA file outputs proccess in a colorful format for process hunting |
 
-## File Color
+## File Color Example
 
 This CNA file outputs files in a colorful format for file hunting.
 
@@ -241,7 +241,7 @@ This CNA file outputs files in a colorful format for file hunting.
 
 ![File-Color-Example](/Pictures/File-Color-Example.png)
 
-## Process Color
+## Process Color Example
 
 This CNA file outputs proccess in a colorful format for process hunting.
 
