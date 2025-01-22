@@ -9,7 +9,7 @@ set BEACON_OUTPUT_PS {
 
     # Process names to be highlighted
     @windows = @("explorer.exe", "winlogon.exe", "lsass.exe", "spoolsv.exe");
-	@security = @("MsMpEng.exe", "SentinelCtl.exe", "cb.exe", "CybereasonAgent.exe", "CyveraConsole.exe", "tlaworker.exe", "cytray.exe", "cytool.exe", "ccSvcHst.exe", "ekrn.exe", "acwebhelper.exe", "bdservicehost.exe", "falcon-sensor", "SophosEndpointAgent.exe", "SntpService.exe", "SSPService.exe");
+    @security = @("MsMpEng.exe", "SentinelCtl.exe", "cb.exe", "CybereasonAgent.exe", "CyveraConsole.exe", "tlaworker.exe", "cytray.exe", "cytool.exe", "ccSvcHst.exe", "ekrn.exe", "acwebhelper.exe", "bdservicehost.exe", "falcon-sensor", "SophosEndpointAgent.exe", "SntpService.exe", "SSPService.exe");
 
     # @final_ps is the final array. It is built as we figure out all child-parent relationships
     # @reverse_ps is used to append children starting with the lowest pid
