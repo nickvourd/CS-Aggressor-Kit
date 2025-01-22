@@ -1,0 +1,174 @@
+# BEACON_OUTPUT_PS
+#Cobalt Strike Process Tree Aggressor Script
+
+# Re-written to highlight certain processes by Skele.Tor
+
+set BEACON_OUTPUT_PS {
+	local('$bd $maxdepth');
+    $bd = bdata($1);
+
+    # Process names to be highlighted
+    @windows = @("explorer.exe", "winlogon.exe", "lsass.exe", "spoolsv.exe");
+	@security = @("MsMpEng.exe", "SentinelCtl.exe", "cb.exe", "CybereasonAgent.exe", "CyveraConsole.exe", "tlaworker.exe", "cytray.exe", "cytool.exe", "ccSvcHst.exe", "ekrn.exe", "acwebhelper.exe", "bdservicehost.exe", "falcon-sensor", "SophosEndpointAgent.exe", "SntpService.exe", "SSPService.exe");
+
+    # @final_ps is the final array. It is built as we figure out all child-parent relationships
+    # @reverse_ps is used to append children starting with the lowest pid
+    # @temp_ps is a temp array
+
+    local('@ps @final_ps @reverse_ps @temp_ps');
+    local('$outps $temp $name $ppid $pid $arch $user $session');
+    local('$final_ps_size $temp_name');
+
+    #$outps .= "\cC[*]\o Process List with process highlighting\n";
+
+    $outps .= "\cC[*]\o Process List\n\n";
+    $outps .= "\cC[*]\o This Beacon PID:   \c8 YELLOW ". $bd['pid'] ." \o \n";
+    $outps .= "\cC[*]\o Windows Processes: \c9 GREEN \o \n";
+    $outps .= "\cC[*]\o Security Products: \c4 RED \o \n\n";
+    $outps .= " PID   PPID  Name                                   Arch  Session     User\n";
+    $outps .= "\cE ---   ----  ----                                   ----  -------     ----\n";
+
+    foreach $temp (split("\n", ["$2" trim])) {
+        ($name, $ppid, $pid, $arch, $user, $session) = split("\t", $temp);
+        
+        $printed = 0;
+
+        # highlight current process in YELLOW
+        if ($pid == $bd['pid']) {
+            push(@ps, %(pid => $pid, ppid => $ppid, pid_formatted => "$[5]pid", ppid_formatted => "$[5]ppid", color => "\c8", name => $name, arch => "$[5]arch", session => "$[11]session", user => $user));
+        }
+
+        # highlight Windows Processes in GREEN
+        foreach $value (@windows){
+			if($name eq $value){
+				push(@ps, %(pid => $pid, ppid => $ppid, pid_formatted => "$[5]pid", ppid_formatted => "$[5]ppid", color => "\c9", name => $name, arch => "$[5]arch", session => "$[11]session", user => $user));
+                $printed++;
+				break;
+			}
+		}
+
+        # highlight security products in RED
+        foreach $value (@security){
+			if($name eq $value){
+				push(@ps, %(pid => $pid, ppid => $ppid, pid_formatted => "$[5]pid", ppid_formatted => "$[5]ppid", color => "\c4", name => $name, arch => "$[5]arch", session => "$[11]session", user => $user));
+                $printed++;
+				break;
+			}
+		}
+
+        if ($printed < 1) {
+            push(@ps, %(pid => $pid, ppid => $ppid, pid_formatted => "$[5]pid", ppid_formatted => "$[5]ppid", color => "", name => $name, arch => "$[5]arch", session => "$[11]session", user => $user));
+        }
+    }
+
+    # sort the processes please
+    sort({ return $1['pid'] <=> $2['pid']; }, @ps);
+
+    # get the @ps array in a reverse order for the ascending child sorting order
+    @reverse_ps = reverse(@ps);
+
+
+    # Find all orphan processes and add them to the final_ps. Those is the root of the process tree
+    sub buildOrphanage{
+        local('$counter4 $counter5 $orphan');
+        for ($counter4 = 0; $counter4 < size($1); $counter4++){
+            $orphan = true;
+
+            for ($counter5 = 0; $counter5 < size($1); $counter5++){
+                if ($1[$counter4]['ppid'] == $1[$counter5]['pid']){
+                    $orphan = false;
+                    break;
+                }
+            }
+
+            # PID zero - it's gotta be an orphan, poor kid
+            if ($1[$counter4]['pid'] == 0){
+                $orphan = true;
+            }
+
+
+            if ($orphan == true){
+                #set indentation and push to the @final_ps
+                $1[$counter4]['indent'] = "";
+                push($2, $1[$counter4]);
+            }
+        }
+    }
+
+    # finds an index of a given PID in the array
+    sub findArrayElement{
+        local('$index $value');
+        foreach $index => $value ($1){
+            if ($1[$index]['pid'] == $2){
+                return $index;
+            }
+        }
+        return $null;
+    }
+
+    # adds parent and  all of its children to a temp_ps which then being copied into a final_ps
+    sub addChildrenProcesses{
+        local ('$parent $potentialChild $arrayIndex');
+        # for every parent in the current final_ps
+        foreach $parent ($2){
+
+            # check if that parent is already there
+            $arrayIndex = findArrayElement($1, $parent['pid']);
+
+            # if the parent is not there - add it first
+            if ($arrayIndex == $null){
+                #add the parent first
+                push($1, $parent);
+
+                # update arrayIndex for children to follow
+                $arrayIndex = size($1) - 1;
+            }
+
+            #now find all the children of the process and insert those right under the parent
+            foreach $potentialChild ($3){
+                if ($potentialChild['ppid'] ==  $parent['pid'] &&  $potentialChild['ppid'] != $potentialChild['pid']){
+                    $potentialChild['indent'] = $parent['indent'] . "    ";
+                    add($1, $potentialChild, $arrayIndex + 1);
+                }
+            }
+        }
+        # update @final_ps
+        $2 = copy($1);
+        # clear temp_ps
+        clear($1);
+    }
+
+    buildOrphanage(@ps, @final_ps);
+
+    # until @final_ps is not the same size as @ps, keep adding children
+    # WARNING: if something doesn't work correctly, this will create an infinite loop with Cobalt Strike hanging itself
+    # A max depth of 100 has been set to stop this condition
+    while (size(@final_ps) < size(@ps)){
+        $maxdepth += 1;
+        addChildrenProcesses(@temp_ps, @final_ps, @reverse_ps);
+        $final_ps_size = size(@final_ps);
+        # Prevent infinate loop
+        if ($maxdepth > 100) {
+            break;
+        }
+    }
+
+    # in case of an infinite loop, this can be used to debug
+    # for ($counter1 = 0; $counter1 < 10; $counter1++){
+    # 	addChildrenProcesses(@temp_ps, @final_ps, @reverse_ps);
+    # }
+
+    # append to our outstring
+    foreach $temp (@final_ps) {
+        # for some reason this was the best way to format that string
+        $temp_name = $temp['indent'] . $temp['name'];
+
+        $outps .= "$temp['color'] $temp['pid_formatted'] $temp['ppid_formatted'] $[38]temp_name $temp['arch'] $temp['session'] $temp['user']\o\n";
+    }
+
+    # clear these arrays since for some reason they persist after each aggressor script run
+    clear(@final_ps);
+    clear(@ps);
+
+    return $outps;
+}

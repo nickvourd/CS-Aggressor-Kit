@@ -1,0 +1,122 @@
+# output for the ls command
+# Cobalt Strike file list Aggressor Script
+
+# Re-written to highlight file types by Skele.Tor
+
+set BEACON_OUTPUT_LS {
+	local('$out @results $cwd $entry $type $size $name');
+	@results = split("\n", ["$2" trim]);
+
+	# File type categories to be highlighted
+	@executables = @(".exe", ".bat", ".bin", ".com", ".wsf");
+	@system_related = @(".dll", ".bak", ".cab", ".cfg", ".cpl", ".cur", ".dmp", "drv", ".ico", ".ini", ".lnk", ".msi", ".sys", ".tmp");
+	@database = @(".csv", ".dat", ".cab", ".xml", ".log", ".dbf", ".db", ".sql");
+	@txt = @(".txt", ".doc", ".pdf", ".docx", ".odt", ".rtf", ".tex");
+	@program = @(".c", ".cgi", ".cpp", ".cs", ".h", ".jar", ".java", ".php", ".py", ".vb");
+
+	$cwd = left(shift(@results), -1);	# first entry is the current folder
+
+	# parse/process results
+	foreach $entry (@results) {
+		($type, $size, $modified, $name) = split("\t", $entry);
+		if ($type eq "F") {
+			$entry = %(type => "fil", size => format_size($size), modified => $modified, name => $name);
+		}
+		else if ($type eq "D" && $name ne "." && $name ne "..") {
+			$entry = %(type => "dir", size => "", modified => $modified, name => $name);
+		}
+		else {
+			remove();
+		}
+	}
+
+	# sort in alpha order with dir listings on top.
+	sort({ return ($1['type'] . lc($1['name'])) cmp ($2['type'] . lc($2['name'])); }, @results);
+
+	$out .= "\cC[*]\o Listing: $cwd $+ \n\n";
+	$out .= "\cC[*]\o Executable files listed in \c9 GREEN \o \n";
+	$out .= "\cC[*]\o System-Related files listed in \cD PURPLE \o \n";
+	$out .= "\cC[*]\o Database files listed in \c8 YELLOW \o \n";
+	$out .= "\cC[*]\o Word Processor and TXT files listed in \c4 RED \o \n";
+	$out .= "\cC[*]\o Program files listed in \cB CYAN \o \n";
+	$out .= "\cC[*]\o Directories listed in \cC BLUE \o \n\n";
+	$out .= " Size     Type    Last Modified         Name\n";   
+	$out .= "\cE ----     ----    -------------         ----\n";
+
+	foreach $entry (@results) {
+		($type, $size, $modified, $name) = values($entry, @('type', 'size', 'modified', 'name'));
+		$extension = substr($name, (strlen($name) - 4));
+		$extension4 = substr($name, (strlen($name) - 5));
+		$extension2 = substr($name, (strlen($name) - 3));
+		$extension1 = substr($name, (strlen($name) - 2));
+
+		# Track if file has been printed
+		$printed = 0;
+		
+		# Highlight directories BLUE
+		if($type eq "dir") {
+            $out .= "\cC $[8]size $[7]type $[21]modified $name $+ \n";
+        }
+		else {
+			# Highlight executable files LIGHT GREEN
+			foreach $value (@executables){
+				if($extension eq $value){
+					$out .= "\c9 $[8]size $[7]type $[21]modified $name $+ \n";
+					$printed++;
+					break;
+				}
+			}
+
+			# Highlight system-related files PURPLE
+			if ($printed < 1) {
+				foreach $value (@system_related){
+					if($extension eq $value){
+						$out .= "\cD $[8]size $[7]type $[21]modified $name $+ \n";
+						$printed++;
+						break;
+					}
+				}
+			}
+			
+
+			# Highlight database files YELLOW
+			if ($printed < 1) {
+				foreach $value (@database){
+					if($extension eq $value || $extension2 eq $value){
+						$out .= "\c8 $[8]size $[7]type $[21]modified $name $+ \n";
+						$printed++;
+						break;
+					}
+				}
+			}
+
+			# Highlight word processor and txt files RED
+			if ($printed < 1) {
+				foreach $value (@txt){
+					if($extension eq $value || $extension4 eq $value){
+						$out .= "\c4 $[8]size $[7]type $[21]modified $name $+ \n";
+						$printed++;
+						break;
+					}
+				}
+			}
+
+			# Highlight program files CYAN
+			if ($printed < 1) {
+				foreach $value (@program){
+					if($extension eq $value || $extension2 eq $value || $extension4 eq $value || $extension2 eq $value){
+						$out .= "\cB $[8]size $[7]type $[21]modified $name $+ \n";
+						$printed++;
+						break;
+					}
+				}
+			}
+
+			if($printed < 1) {
+				$out .= " $[8]size $[7]type $[21]modified $name $+ \n";
+			}
+		}
+	}
+
+	return $out;
+}
