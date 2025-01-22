@@ -27,7 +27,9 @@ Homemade Aggressor scripts kit for Cobalt Strike
     - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
     - [CS All Tabs Bold Example](#cs-all-tabs-bold-example)
     - [CWD Beacon Bar Example](#cwd-beacon-bar-example)
-  - SA
+  - [SA](#sa)
+    - [File Color](#file-color)
+    - [Process Color](#process-color)
   - [Utils](#utils)
     - [Sonata Examples](#sonata-examples)
     - [Locate Example](#locate-example)
@@ -51,6 +53,8 @@ The following table illustrates all the CNA files included in this project:
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
+| SA | [File-Color.cna](/SA/File-Color.cna) | This CNA file outputs files in a colorful format for file hunting |
+| SA | [PS-Color.cna](/SA/PS-Color.cna) | This CNA file outputs proccess in a colorful format for process hunting |
 | Utils | [Sonata.cna](/Utils/Sonata.cna) | This CNA file is a port of the [Sonata](https://github.com/nickvourd/Sonata) tool. Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
 | Utils | [locate.cna](/Utils/locate.cna) | This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client |
 
@@ -212,6 +216,40 @@ Additionally, improves the 'cd' command to support restoring the previous direct
 Finally, when you have an Administrator's Beacon, the hostname of the target machine changes from the CNA's default green (used for standard users) to red.
 
 ![CWD-Beacon-Bar-Example-Admin](/Pictures/CWD-Beacon-Bar-Example-Admin.png)
+
+## SA
+
+These CNA files are used for Situational Awareness.
+
+The following table illustrates the CNA files included in the SA section:
+
+| Name | Description |
+|:-----------:|:-----------:|
+| [File-Color.cna](/SA/File-Color.cna) | This CNA file outputs files in a colorful format for file hunting |
+| [PS-Color.cna](/SA/PS-Color.cna) | This CNA file outputs proccess in a colorful format for process hunting |
+
+## File Color
+
+This CNA file outputs files in a colorful format for file hunting.
+
+- [*] Executable files listed in GREEN  
+- [*] System-Related files listed in PURPLE  
+- [*] Database files listed in YELLOW  
+- [*] Word Processor and TXT files listed in RED  
+- [*] Program files listed in CYAN  
+- [*] Directories listed in BLUE
+
+![File-Color-Example](/Pictures/File-Color-Example.png)
+
+## Process Color
+
+This CNA file outputs proccess in a colorful format for process hunting.
+
+- [*] This Beacon PID: YELLOW (<beacon_pid>) 
+- [*] Windows Processes: GREEN  
+- [*] Security Products: RED  
+
+![Process-Color-Example](/Pictures/Process-Color-Example.png)
 
 ## Utils
 
