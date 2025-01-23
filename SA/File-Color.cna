@@ -98,10 +98,10 @@ set BEACON_OUTPUT_LS {
     $out .= "\cC[*]\o Executable files listed in\c9 GREEN \o \n";
     $out .= "\cC[*]\o System-Related files listed in\cD PURPLE \o \n";
     $out .= "\cC[*]\o Database files listed in\c8 YELLOW \o \n";
-    $out .= "\cC[*]\o Word Processor and TXT files listed in\c4 RED \o \n";
-    $out .= "\cC[*]\o Program files listed in\cB CYAN \o \n";
-    $out .= "\cC[*]\o Directories listed in\cC BLUE \o \n";
-    $out .= "\cC[*]\o Media files listed in\c7 ORANGE \o \n\n";
+    $out .= "\cC[*]\o Office related files listed in\c4 RED \o \n";
+    $out .= "\cC[*]\o Source Code files listed in\cB CYAN \o \n";
+    $out .= "\cC[*]\o Media files listed in\c7 ORANGE \o \n";
+    $out .= "\cC[*]\o Directories listed in\cC BLUE \o \n\n";
     $out .= " Size     Type    Last Modified         Name\n";   
     $out .= "\cE ----     ----    -------------         ----\n";
 
