@@ -25,7 +25,7 @@ set BEACON_OUTPUT_LS {
         ".csv", ".dat", ".xml", ".log", ".dbf", ".db", ".sql", ".bak", ".tsv", 
         ".mysql", ".pgsql", ".mdb", ".accdb", ".dbx", ".db3", ".s3db", ".sqlite", 
         ".sqlite3", ".nsf", ".ntf", ".myd", ".frm", ".ibd", ".ndf", ".ldf", ".sdf", 
-        ".mdf", ".dbc", ".dcb", ".mwb", ".dbk", ".pdb", ".lgb", ".jsonl"
+        ".mdf", ".dbc", ".dcb", ".mwb", ".dbk", ".pdb", ".lgb", ".jsonl", ".dtd"
     );
 
     @txt = @(
