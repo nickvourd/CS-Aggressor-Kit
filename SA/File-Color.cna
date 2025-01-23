@@ -108,10 +108,18 @@ set BEACON_OUTPUT_LS {
     # Process each entry
     foreach $entry (@results) {
         ($type, $size, $modified, $name) = values($entry, @('type', 'size', 'modified', 'name'));
-        $extension = substr($name, (strlen($name) - 4));
-        $extension4 = substr($name, (strlen($name) - 5));
-        $extension2 = substr($name, (strlen($name) - 3));
-        $extension1 = substr($name, (strlen($name) - 2));
+
+        $extension = "";
+
+        # Grab file extension
+        if ($type eq "fil") {
+            for ($here = strlen($name); $here > 0; $here--) {
+                if (substr($name, $here, ($here + 1)) eq ".") {
+                    $extension = substr($name, $here);
+                    break;
+                }
+            }
+        }
         
         $printed = 0;  # Track if file has been printed
         
@@ -143,7 +151,7 @@ set BEACON_OUTPUT_LS {
             # Highlight database files YELLOW
             if ($printed < 1) {
                 foreach $value (@database) {
-                    if ($extension eq $value || $extension2 eq $value) {
+                    if ($extension eq $value) {
                         $out .= "\c8 $[8]size $[7]type $[21]modified $name $+ \n";
                         $printed++;
                         break;
@@ -154,7 +162,7 @@ set BEACON_OUTPUT_LS {
             # Highlight word processor and txt files RED
             if ($printed < 1) {
                 foreach $value (@txt) {
-                    if ($extension eq $value || $extension4 eq $value) {
+                    if ($extension eq $value) {
                         $out .= "\c4 $[8]size $[7]type $[21]modified $name $+ \n";
                         $printed++;
                         break;
@@ -165,8 +173,7 @@ set BEACON_OUTPUT_LS {
             # Highlight program files CYAN
             if ($printed < 1) {
                 foreach $value (@program) {
-                    if ($extension eq $value || $extension2 eq $value || 
-                        $extension4 eq $value || $extension2 eq $value) {
+                    if ($extension eq $value) {
                         $out .= "\cB $[8]size $[7]type $[21]modified $name $+ \n";
                         $printed++;
                         break;
@@ -177,8 +184,7 @@ set BEACON_OUTPUT_LS {
             # Highlight media files ORANGE
             if ($printed < 1) {
                 foreach $value (@media) {
-                    if ($extension eq $value || $extension2 eq $value || 
-                        $extension4 eq $value || $extension2 eq $value) {
+                    if ($extension eq $value) {
                         $out .= "\c7 $[8]size $[7]type $[21]modified $name $+ \n";
                         $printed++;
                         break;
