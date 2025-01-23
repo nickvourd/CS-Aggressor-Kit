@@ -235,8 +235,9 @@ This CNA file outputs files in a colorful format for file hunting.
 - [*] Executable files listed in GREEN  
 - [*] System-Related files listed in PURPLE  
 - [*] Database files listed in YELLOW  
-- [*] Word Processor and TXT files listed in RED  
-- [*] Program files listed in CYAN  
+- [*] Office related files listed in RED  
+- [*] Source Code files listed in CYAN
+- [*] Media files listed in ORANGE
 - [*] Directories listed in BLUE
 
 ![File-Color-Example](/Pictures/File-Color-Example.png)
