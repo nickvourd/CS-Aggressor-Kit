@@ -4,7 +4,7 @@
 # Re-written to highlight certain processes by Skele.Tor
 
 set BEACON_OUTPUT_PS {
-	local('$bd $maxdepth');
+    local('$bd $maxdepth');
     $bd = bdata($1);
 
     # Process names to be highlighted
