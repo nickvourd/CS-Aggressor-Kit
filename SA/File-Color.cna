@@ -8,7 +8,7 @@ set BEACON_OUTPUT_LS {
 
     # File type categories to be highlighted
     @executables = @(
-        ".exe", ".bat", ".bin", ".com", ".wsf", ".raw", ".cmd", ".scr", ".msp", 
+        ".exe", ".bat", ".bin", ".com", ".wsf", ".cmd", ".scr", ".msp", 
         ".msc", ".gadget", ".inf", ".ins", ".inx", ".isu", ".job", ".paf", ".pif", 
         ".reg", ".rgs", ".sct", ".shb", ".u3p", ".workflow", ".EXE"
     );
@@ -56,6 +56,14 @@ set BEACON_OUTPUT_LS {
         ".mips", ".arm", ".adb", ".ada", ".p", ".pas", ".pp", ".inc"
     );
 
+    @media = @(
+        ".mp3", ".mp4", ".wav", ".aac", ".wma", ".ogg", ".m4a", ".flac", ".m4v", ".mov",
+        ".avi", ".wmv", ".flv", ".webm", ".mkv", ".3gp", ".gif", ".png", ".jpg", ".jpeg",
+        ".bmp", ".tiff", ".svg", ".raw", ".psd", ".ai", ".eps", ".ico", ".webp", ".heic",
+        ".mp2", ".m4b", ".m4p", ".mpg", ".mpeg", ".3g2", ".h264", ".rm", ".swf", ".vob",
+        ".wmv", ".avif", ".tif", ".cr2", ".nef", ".arw", ".dng", ".jpe", ".jfif"
+    );
+
     $cwd = left(shift(@results), -1);    # First entry is the current folder
 
     # Parse/process results
@@ -93,6 +101,7 @@ set BEACON_OUTPUT_LS {
     $out .= "\cC[*]\o Word Processor and TXT files listed in\c4 RED \o \n";
     $out .= "\cC[*]\o Program files listed in\cB CYAN \o \n";
     $out .= "\cC[*]\o Directories listed in\cC BLUE \o \n\n";
+    $out .= "\cC[*]\o Media files listed in\c7 ORANGE \o \n";
     $out .= " Size     Type    Last Modified         Name\n";   
     $out .= "\cE ----     ----    -------------         ----\n";
 
@@ -159,6 +168,18 @@ set BEACON_OUTPUT_LS {
                     if ($extension eq $value || $extension2 eq $value || 
                         $extension4 eq $value || $extension2 eq $value) {
                         $out .= "\cB $[8]size $[7]type $[21]modified $name $+ \n";
+                        $printed++;
+                        break;
+                    }
+                }
+            }
+
+            # Highlight media files ORANGE
+            if ($printed < 1) {
+                foreach $value (@media) {
+                    if ($extension eq $value || $extension2 eq $value || 
+                        $extension4 eq $value || $extension2 eq $value) {
+                        $out .= "\c7 $[8]size $[7]type $[21]modified $name $+ \n";
                         $printed++;
                         break;
                     }
