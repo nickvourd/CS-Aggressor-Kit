@@ -10,14 +10,15 @@ set BEACON_OUTPUT_LS {
     @executables = @(
         ".exe", ".bat", ".bin", ".com", ".wsf", ".raw", ".cmd", ".scr", ".msp", 
         ".msc", ".gadget", ".inf", ".ins", ".inx", ".isu", ".job", ".paf", ".pif", 
-        ".reg", ".rgs", ".sct", ".shb", ".u3p", ".workflow"
+        ".reg", ".rgs", ".sct", ".shb", ".u3p", ".workflow", ".EXE"
     );
 
     @system_related = @(
         ".dll", ".cab", ".cfg", ".cpl", ".cur", ".dmp", ".drv", ".ico", ".ini", 
         ".lnk", ".msi", ".sys", ".tmp", ".config", ".cache", ".cat", ".ctt", ".cty", 
         ".gpd", ".pnf", ".sdb", ".shd", ".shs", ".theme", ".wpx", ".lock", ".key", 
-        ".acm", ".adt", ".adv", ".ani", ".asp", ".ocx", ".tsp", ".url", ".manifest"
+        ".acm", ".adt", ".adv", ".ani", ".asp", ".ocx", ".tsp", ".url", ".manifest",
+        ".DLL", ".efi"
     );
 
     @database = @(
