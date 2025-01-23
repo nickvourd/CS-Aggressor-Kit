@@ -18,7 +18,7 @@ set BEACON_OUTPUT_LS {
         ".lnk", ".msi", ".sys", ".tmp", ".config", ".cache", ".cat", ".ctt", ".cty", 
         ".gpd", ".pnf", ".sdb", ".shd", ".shs", ".theme", ".wpx", ".lock", ".key", 
         ".acm", ".adt", ".adv", ".ani", ".asp", ".ocx", ".tsp", ".url", ".manifest",
-        ".DLL", ".efi"
+        ".DLL", ".efi", ".mof"
     );
 
     @database = @(
