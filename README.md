@@ -2,7 +2,7 @@
 Homemade Aggressor scripts kit for Cobalt Strike
 
 <p align="center">
-  <img width="450" height="450" src="/Pictures/logo.png"><br /><br />
+  <img width="550" height="450" src="/Pictures/logo.png"><br /><br />
   <img alt="GitHub License" src="https://img.shields.io/github/license/nickvourd/CS-Aggressor-Kit?style=social&logo=GitHub&logoColor=purple">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nickvourd/CS-Aggressor-Kit?logoColor=yellow">
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/nickvourd/CS-Aggressor-Kit?logoColor=red">
@@ -19,6 +19,14 @@ Homemade Aggressor scripts kit for Cobalt Strike
     - [Setup Teams Webhooks](#setup-teams-webhooks)
     - [Setup Mattermost Webhooks](#setup-mattermost-webhooks)
     - [Alert CNA Output Examples](#alert-cna-output-examples)
+      - [New incoming Beacon notification example (Slack):](#new-incoming-beacon-notification-example-slack)
+      - [New Web hit notification example (Discord):](#new-web-hit-notification-example-discord)
+      - [New CS client connects to the teamserver notification example (Slack):](#new-cs-client-connects-to-the-teamserver-notification-example-slack)
+      - [CS Client disconnects from the teamserver notification example (Discord):](#cs-client-disconnects-from-the-teamserver-notification-example-discord)
+      - [CS Client hosts a file or clones a website notification example (Slack):](#cs-client-hosts-a-file-or-clones-a-website-notification-example-slack)
+      - [CS client posts something in the event log (Discord):](#cs-client-posts-something-in-the-event-log-discord)
+      - [New credentials come in from keylogging (Discord):](#new-credentials-come-in-from-keylogging-discord)
+      - [New screenshot is taken from Cobalt Strike (Slack):](#new-screenshot-is-taken-from-cobalt-strike-slack)
   - [Auto](#auto)
     - [How Auto Sleep Works](#how-auto-sleep-works)
     - [Auto Sleep Interactive For Testing](#auto-sleep-interactive-for-testing)
@@ -28,10 +36,12 @@ Homemade Aggressor scripts kit for Cobalt Strike
     - [CS All Tabs Bold Example](#cs-all-tabs-bold-example)
     - [CWD Beacon Bar Example](#cwd-beacon-bar-example)
   - [SA](#sa)
-    - [File Color Example](#file-color-example)
-    - [Process Color Example](#process-color-example)
+  - [File Color Example](#file-color-example)
+  - [Process Color Example](#process-color-example)
   - [Utils](#utils)
     - [Sonata Examples](#sonata-examples)
+      - [Sonata File](#sonata-file)
+      - [Sonata String](#sonata-string)
     - [Locate Example](#locate-example)
 
 ## Summary
