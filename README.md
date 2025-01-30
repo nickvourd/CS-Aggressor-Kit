@@ -297,6 +297,9 @@ Usage: `Sonata -f/--file <local_filepath> OR Sonata -s/--string <string>`
 
 ### Locate Example
 
-This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client
+This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client.
+
+ℹ️ When you insert a new file on the host disk, it is recommended to run the `updatedb` command to update the file database and sync the system with the newly added files.
 
 ![locate-example](/Pictures/locate-example.png)
+
