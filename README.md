@@ -31,7 +31,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
   - [Auto](#auto)
     - [How Auto Sleep Works](#how-auto-sleep-works)
     - [Auto Sleep Interactive For Testing](#auto-sleep-interactive-for-testing)
-    - [Auto Sleep After Initial Access](auto-sleep-after-initial-access)
+    - [Auto Sleep After Initial Access](#auto-sleep-after-initial-access)
   - [Misc](#misc)
     - [Beacon Name Tab Example](#beacon-name-tab-example)
     - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
