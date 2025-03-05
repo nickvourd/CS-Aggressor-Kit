@@ -5,7 +5,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
 <p align="center">
   <img width="450" height="450" src="/Pictures/logo.png"><br /><br />
   <img alt="GitHub License" src="https://img.shields.io/github/license/nickvourd/CS-Aggressor-Kit?style=social&logo=GitHub&logoColor=purple">
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nickvourd/CS-Aggressor-Kit?logoColor=yellow">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nickvourd/CS-Aggressor-Kit?logoColor=yellow"><br /><br />
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/nickvourd/CS-Aggressor-Kit?logoColor=red">
   <img alt="GitHub watchers" src="https://img.shields.io/github/watchers/nickvourd/CS-Aggressor-Kit?logoColor=blue">
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/nickvourd/CS-Aggressor-Kit?style=social&logo=GitHub&logoColor=green">
