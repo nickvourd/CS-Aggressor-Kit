@@ -1,4 +1,5 @@
 # CS-Aggressor-Kit
+
 Homemade Aggressor scripts kit for Cobalt Strike
 
 <p align="center">
@@ -10,8 +11,17 @@ Homemade Aggressor scripts kit for Cobalt Strike
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/nickvourd/CS-Aggressor-Kit?style=social&logo=GitHub&logoColor=green">
 </p>
 
+## Description
+
+This repository contains numerous CNA files (Aggressor Scripts) for Cobalt Strike, which are useful during a Red Team engagement. Many of these CNA files have been inspired by other well-known repositories.
+
+The primary author of this project is [@nickvourd](https://x.com/nickvourd).
+
+Special thanks to [Will Nowlan](https://www.linkedin.com/in/will-nowlan-87b18a1bb/) for all his contributions.
+
 ## Table of Contents
 - [CS-Aggressor-Kit](#cs-aggressor-kit)
+  - [Description](#description)
   - [Table of Contents](#table-of-contents)
   - [Summary](#summary)
   - [Alert](#alert)
