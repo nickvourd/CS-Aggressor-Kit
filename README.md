@@ -47,6 +47,7 @@ Special thanks to [Will Nowlan](https://www.linkedin.com/in/will-nowlan-87b18a1b
     - [Beacon Name Tab Colors Example](#beacon-name-tab-colors-example)
     - [CS All Tabs Bold Example](#cs-all-tabs-bold-example)
     - [CWD Beacon Bar Example](#cwd-beacon-bar-example)
+    - [Opsec Example](#opsec-example)
   - [SA](#sa)
     - [File Color Example](#file-color-example)
     - [Process Color Example](#process-color-example)
