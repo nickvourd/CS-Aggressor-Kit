@@ -246,6 +246,10 @@ Finally, when you have an Administrator's Beacon, the hostname of the target mac
 
 ![CWD-Beacon-Bar-Example-Admin](/Pictures/CWD-Beacon-Bar-Example-Admin.png)
 
+### Opsec Example
+
+This CNA file alows and blocks default Cobalt Strike commands to improve the opsec.
+
 ## SA
 
 These CNA files are used for Situational Awareness.
