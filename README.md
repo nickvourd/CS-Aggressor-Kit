@@ -188,7 +188,7 @@ docker exec -it signal bash
 
 ![signal-token](/Pictures/signal-token.png)
 
-![signal-token-2](/Pictures/signal-token-2)
+![signal-token-2](/Pictures/signal-token-2.png)
 
 ### Alert CNA Output Examples
 
