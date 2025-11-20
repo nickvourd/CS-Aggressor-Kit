@@ -71,7 +71,7 @@ The following table illustrates all the CNA files included in this project:
 | Alert |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Teams CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Mattermost CNA file for Linux CS Client |
 | Alert |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Mattermost CNA file for Windows CS Client |
-| Alert | [iMessage_MacOs.cna](/Alert/iMesssage/iMessage_MacOs.cna) | iMessage CNA file for MacOS CS Client | 
+| Alert | [iMessage_MacOS.cna](/Alert/iMessage/iMessage_MacOS.cna) | iMessage CNA file for MacOS CS Client | 
 | Alert | [Signal_linux.cna](/Alert/Signal/Signal_linux.cna) | Signal CNA file for Linux/MacOS CS Client | 
 | Auto | [auto-sleep-on-start.cna](/Auto/auto-sleep-on-start.cna) | This CNA file automatically sets the sleep time to a specific value when a new user joins the teamserver. It requires a client to remain open at all times, ensuring the sleep time is configured even if the Cobalt Strike client is closed or you forget to set it while away |
 | Auto | [auto-sleep-on-exit.cna](/Auto/auto-sleep-on-exit.cna) | This CNA file automatically sets the sleep time to a specific value when all users, except one, disconnect from the teamserver. A client must remain open at all times |
@@ -111,7 +111,7 @@ The following table illustrates the CNA files included in the Alert section:
 |[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| MacOS/Linux | Teams | Teams CNA file for Linux CS Client |
 |[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| MacOS/Linux | Mattermost | Mattermost CNA file for Linux CS Client |
 |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Windows | Mattermost | Mattermost CNA file for Windows CS Client |
-| [iMessage_MacOs.cna](/Alert/iMesssage/iMessage_MacOs.cna) | MacOS | Apple iMessage | iMessage CNA file for MacOS CS Client | 
+| [iMessage_MacOS.cna](/Alert/iMessage/iMessage_MacOS.cna) | MacOS | Apple iMessage | iMessage CNA file for MacOS CS Client | 
 | [Signal_linux.cna](/Alert/Signal/Signal_linux.cna) | MacOS/Linux | Signal | Signal CNA file for Linux/MacOS CS Client | 
 
 ### Setup Slack and Webhooks
