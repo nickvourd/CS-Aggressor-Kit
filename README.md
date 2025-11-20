@@ -190,6 +190,42 @@ docker exec -it signal bash
 
 ![signal-token-2](/Pictures/signal-token-2.png)
 
+- Switch to user:
+
+```
+su - signal-api
+```
+
+- Register your number:
+
+```
+signal-cli --config /home/.local/share/signal-cli -u <+your_number> register --captcha 'signalcaptcha://<LONG_TOKEN_VALUE>'
+```
+
+- Verify the number using the SMS code:
+
+```
+signal-cli --config /home/.local/share/signal-cli -u <+your_number> verify <verify_code>
+```
+
+- Then set your profile name:
+
+```
+signal-cli --config /home/.local/share/signal-cli -u <+your_number> updateProfile --name '<C2_BOT_NAME>' --about '<Description>'
+```
+
+- From outside the container send a test message:
+
+```
+curl -X POST http://127.0.0.1:8080/v2/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "number": "<+your_number>",
+    "recipients": ["<+receipt_number>"],
+    "message": "Test from Signal CLI REST API"
+  }'
+```
+
 ### Alert CNA Output Examples
 
 #### New incoming Beacon notification example (Slack):
