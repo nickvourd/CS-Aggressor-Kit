@@ -29,6 +29,8 @@ Special thanks to [Will Nowlan](https://www.linkedin.com/in/will-nowlan-87b18a1b
     - [Setup Discord and Webhooks](#setup-discord-and-webhooks)
     - [Setup Teams Webhooks](#setup-teams-webhooks)
     - [Setup Mattermost Webhooks](#setup-mattermost-webhooks)
+    - [Set Up iMessage Implementation](#set-up-imessage-implementation)
+    - [Set Up Signal Implementation](#set-up-signal-implementation)
     - [Alert CNA Output Examples](#alert-cna-output-examples)
       - [New incoming Beacon notification example (Slack)](#new-incoming-beacon-notification-example-slack)
       - [New Web hit notification example (Discord)](#new-web-hit-notification-example-discord)
@@ -86,7 +88,7 @@ The following table illustrates all the CNA files included in this project:
 
 ## Alert
 
-These CNA files will notify you via the `Slack`/`Discord`/`Teams`/`Mattermost` applications when:
+These CNA files will notify you via the `Slack`/`Discord`/`Teams`/`Mattermost`/`Signal`/`iMessage` applications when:
 
 - A new client connects to the team server.
 - A CS client disconnects from the team server.
@@ -97,18 +99,20 @@ These CNA files will notify you via the `Slack`/`Discord`/`Teams`/`Mattermost` a
 - New credentials come in from keylogging.
 - A new screenshot is taken from Cobalt Strike.
 
-:information_source: Some CNA files are compatible with both Windows and Linux operating systems.
+:information_source: Some CNA files are compatible with Windows/Linux/MacOS operating systems.
 
 The following table illustrates the CNA files included in the Alert section:
 
 | Name | OS | App | Description |
 |:-----------:|:-----------:|:-----------:|:-----------:|
-|[slack-alerts_linux.cna](/Alert/Slack/slack-alerts_linux.cna)| Linux | Slack | Slack CNA file for Linux CS client |
+|[slack-alerts_linux.cna](/Alert/Slack/slack-alerts_linux.cna)| MacOS/Linux | Slack | Slack CNA file for Linux CS client |
 |[slack-alerts_windows.cna](/Alert/Slack/slack-alerts_windows.cna)| Windows | Slack | Slack CNA file for Windows CS client |
-|[discord-alerts_linux.cna](/Alert/Discord/discord-alerts_linux.cna)| Linux | Discord | Discord CNA file for Linux CS Client |
-|[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| Linux | Teams | Teams CNA file for Linux CS Client |
-|[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| Linux | Mattermost | Mattermost CNA file for Linux CS Client |
+|[discord-alerts_linux.cna](/Alert/Discord/discord-alerts_linux.cna)| MacOS/Linux | Discord | Discord CNA file for Linux CS Client |
+|[teams-alerts_linux.cna](/Alert/Teams/teams-alerts_linux.cna)| MacOS/Linux | Teams | Teams CNA file for Linux CS Client |
+|[mattermost-alerts_linux.cna](/Alert/Mattermost/mattermost-alerts_linux.cna)| MacOS/Linux | Mattermost | Mattermost CNA file for Linux CS Client |
 |[mattermost-alerts_windows.cna](/Alert/Mattermost/mattermost-alerts_windows.cna)| Windows | Mattermost | Mattermost CNA file for Windows CS Client |
+| [iMessage_MacOs.cna](/Alert/iMesssage/iMessage_MacOs.cna) | MacOS | Apple iMessage | iMessage CNA file for MacOS CS Client | 
+| [Signal_linux.cna](/Alert/Signal/Signal_linux.cna) | MacOS/Linux | Signal | Signal CNA file for Linux/MacOS CS Client | 
 
 ### Setup Slack and Webhooks
 
@@ -125,6 +129,63 @@ The following table illustrates the CNA files included in the Alert section:
 ### Setup Mattermost Webhooks
 
 :information_source: To set up a Mattermost webhook, you can follow these guides provided on [Mattermost website](https://developers.mattermost.com/integrate/webhooks/incoming/).
+
+### Set Up iMessage Implementation
+
+:information_source: To set up the iMessage implementation, you need to use a device with MacOS like Macbook Pro/Air or Mac mini. 
+
+- Install:
+
+```
+brew install osascript
+```
+
+### Set Up Signal Implementation
+
+-> Full Digram Communication:
+
+```
++------------------------------+
+| Linux Host                   |
+|                              |
+|  Cobalt Strike / CNA Script  |
+|        (runs as root)        |
+|               |              |
+|     curl http://127.0.0.1:8080
+|               |              |
++---------------|--------------+
+                |
+    Host port 8080 mapped to container port 8080
+                |
++---------------v--------------+
+| Docker Container (signal)    |
+|  Process user: signal-api    |
+|  signal-cli REST API (8080)  |
++------------------------------+
+```
+
+:information_source: In order to set up signal implementation, you need to do the following.
+
+- Install [Docker Desktop](https://docs.docker.com/desktop/)
+- Install docker signal-cli:
+
+```
+docker run -d \
+  --name signal \
+  -p 8080:8080 \
+  -v signal-data:/home/.local/share/signal-cli \
+  bbernhard/signal-cli-rest-api
+```
+
+- Then connect:
+
+```
+docker exec -it signal bash   
+```
+
+- Visit [Captcha Website](https://signalcaptchas.org/registration/generate.html)
+- Solve the captcha and you will see the following:
+
 
 ### Alert CNA Output Examples
 
