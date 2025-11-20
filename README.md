@@ -186,6 +186,9 @@ docker exec -it signal bash
 - Visit [Captcha Website](https://signalcaptchas.org/registration/generate.html)
 - Solve the captcha and you will see the following:
 
+![signal-token](/Pictures/signal-token.png)
+
+![signal-token-2](/Pictures/signal-token-2)
 
 ### Alert CNA Output Examples
 
