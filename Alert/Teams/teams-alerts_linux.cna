@@ -2,19 +2,431 @@
 # Spacial thanks to @sec_groundzero.
 # Based on the work of @bluescreenofjeff.
 
-$teams_webhookURL = 'https://teams.com/api/webhooks/XXXX'; # Change this with your Teams webhook url
+debug(7 | 34); # 34 is required for try/catch
+################### CONFIG ###################
+
+global('$teams_webhookURL $teamserver_hostname $active_users');
+$teams_webhookURL = "https://teams.com/api/webhooks/XXXX"; # Change this with your Teams webhook url
 $teamserver_hostname = 'XXXXXX'; # Change this with your hostname
+
+#### AUXILIARY FUNCTIONS ####
+
+# Json2Sleep: Simple JSON parser that converts JSON strings to Sleep data structures
+# Arguments:
+#   $1: JSON string to parse
+# Returns: Sleep data structure (map/array)
+sub Json2Sleep {
+    local('$parser %parser $lexer %lexer $withTokenKind $dispatcher');
+
+    $dispatcher = { return invoke(%FN[$0], @_, $0, \$this); };
+
+    $withTokenKind = {
+        return let(
+            $1,
+            $KIND_OCURLY => 1, $KIND_CCURLY => 2, $KIND_OBRACKET => 3, $KIND_CBRACKET => 4, $KIND_COMMA => 5, $KIND_COLON => 6,
+            $KIND_STRING => 7, $KIND_NUMBER => 8, $KIND_TRUE => 9, $KIND_FALSE => 10, $KIND_NULL => 11,
+            $Token => { return @_; },
+            $Type =>  { return $1[0]; },
+            $Value => { return $1[1]; }
+        );
+    };
+
+    %lexer = %(
+        nextToken => {
+            local('$c');
+            [$this skipWhitespace];
+            $c = [$this peek];
+            if ($c is $null) {                        return $null; }
+            if ($c eq '{') { [$this chop];            return [$Token: $KIND_OCURLY]; }
+            if ($c eq '}') { [$this chop];            return [$Token: $KIND_CCURLY]; }
+            if ($c eq '[') { [$this chop];            return [$Token: $KIND_OBRACKET]; }
+            if ($c eq ']') { [$this chop];            return [$Token: $KIND_CBRACKET]; }
+            if ($c eq ',') { [$this chop];            return [$Token: $KIND_COMMA]; }
+            if ($c eq ':') { [$this chop];            return [$Token: $KIND_COLON]; }
+            if ($c eq 't') { [$this expect: "true"];  return [$Token: $KIND_TRUE, 1]; }
+            if ($c eq 'f') { [$this expect: "false"]; return [$Token: $KIND_FALSE, 0]; }
+            if ($c eq 'n') { [$this expect: "null"];  return [$Token: $KIND_NULL, $null]; }
+            if ($c eq '"') {                          return [$this lexString]; }
+            if ($c eq '-' || [$this isDigit: $c]) {   return [$this lexNumber]; }
+            throw "Unxpected char ' $+ $c $+ ' at $cursor";
+        },
+        peekToken => {
+            local('$t $old');
+            $old = $cursor;
+            $t = [$this nextToken];
+            $cursor = $old;
+            return $t;
+        },
+        expectToken => {
+            local('$t');
+            $t = [$this nextToken];
+            if ($t is $null) { throw "EOF: Expected $1";}
+            if ([$Type: $t] ne $1) { throw "Expected token $1 but got " . [$Type: $t]; }
+            return $t;
+        },
+        peek => {
+            if ($cursor < strlen($input)) {
+                return charAt($input, $cursor);
+            }
+            return $null;
+        },
+        chop => {
+            local('$c');
+            if ($cursor < strlen($input)) {
+                $c = charAt($input, $cursor);
+                $cursor++;
+                if ($c eq "\n") { $line++; $col = 1; } else { $col++; }
+                return $c;
+            }
+            return $null;
+        },
+        expect => {
+            local('$s');
+            if ($cursor + strlen($1) > strlen($input)) { throw "EOF: Expected ' $+ $1 $+ ' at $line $+ : $+ $col but got $+ ' $s $+ '"; }
+            $s = substr($input, $cursor, $cursor + strlen($1));
+            if ($s ne $1) { throw "Expected ' $+ $1 $+ ' at $line $+ : $+ $col but got $+ ' $s $+ '"; }
+            $cursor = $cursor + strlen($s);
+            $col += strlen($s);
+            return $s;
+        },
+        skipWhitespace => {
+            local('$c');
+            $c = [$this peek];
+            while ($c !is $null && $c ismatch '\r|\n|\t| ') {
+                [$this chop];
+                $c = [$this peek];
+            }
+        },
+        lexString => {
+            local('$c $start $hasEscapedChars $str');
+            $hasEscapedChars = 0;
+            $c = [$this chop];
+            $start = $cursor;
+            while(1) {
+                $c = [$this chop];
+                if ($c is $null)     { throw "EOF: String literal not closed"; }
+                else if ($c eq "\\") { [$this skipEscape]; $hasEscapedChars = 1; }
+                else if ($c eq '"')  { break; }
+            }
+            $str = substr($input, $start, $cursor - 1);
+            if ($hasEscapedChars) { $str = [$this unescapeString: $str]; }
+            return [$Token: $KIND_STRING, $str];
+        },
+        skipEscape => {
+            local('$c $i');
+            $c = [$this chop];
+            if ($c eq '"')  { return 1; }
+            if ($c eq "\\") { return 1; }
+            if ($c eq "/")  { return 1; }
+            if ($c eq "b")  { return 1; }
+            if ($c eq "f")  { return 1; }
+            if ($c eq "n")  { return 1; }
+            if ($c eq "r")  { return 1; }
+            if ($c eq "t")  { return 1; }
+            if ($c eq "u")  {
+               for ($i = 0; $i < 4; $i++)  {
+                    $c = [$this chop];
+                    if ($c !ismatch '[0-9a-fA-F]') { throw "Expected hex-digit but got: ' $+ $c $_ '"; }
+               }
+               return 1;
+            }
+            throw "Unkown escaped char: ' $+ $c $_ '";
+        },
+        lexNumber => {
+            local('$c $start $n');
+            $start = $cursor;
+            $c = [$this peek];
+            while ($c !is $null && $c ismatch '-|\d|\.') {
+                # TODO: Support floats. Sleep's parseNumber only parse integers
+                if ($c eq ".") { throw "Floats aren't supported"; }
+                [$this chop];
+                $c = [$this peek];
+            }
+            $n = parseNumber(substr($input, $start, $cursor), 10);
+            return [$Token: $KIND_NUMBER, $n];
+        },
+        isDigit => {
+            return iff(48 <= asc($1) && asc($1) <= 57, 1, 0);
+        },
+        unescapeString => {
+            local('$i @builder $len $c $hex');
+            $len = strlen($1);
+            for ($i = 0; $i < $len; $i++) {
+                $c = charAt($1, $i);
+                if ($c eq "\\" && ($i + 1) < $len) {
+                    $i++;
+                    $c = charAt($1, $i);
+                    if ($c eq '"')       { push(@builder, '"');  }
+                    else if ($c eq "\\") { push(@builder, "\\"); }
+                    else if ($c eq "/")  { push(@builder, "/");  }
+                    else if ($c eq "b")  { push(@builder, "\b"); }
+                    else if ($c eq "f")  { push(@builder, "\f"); }
+                    else if ($c eq "n")  { push(@builder, "\n"); }
+                    else if ($c eq "r")  { push(@builder, "\r"); }
+                    else if ($c eq "t")  { push(@builder, "\t"); }
+                    else if ($c eq "u")  {
+                        if (($i + 4) < $len) {
+                            $hex = substr($1, $i + 1, $i + 5);
+                            push(@builder, chr(parseNumber($hex, 16)));
+                            $i += 4;
+                        }
+                        else {
+                            throw "Bad \\u escape";
+                        }
+                    }
+                }
+                else {
+                    push(@builder, $c);
+                }
+            }
+            return join("", @builder);
+        },
+        init => {
+            $input = $1;
+            $cursor = 0;
+            $line = 1;
+            $col = 1;
+        }
+    );
+
+    %parser = %(
+        parse => {
+            local('$t $v');
+            [$lexer init: $1];
+            $v = [$this parseElem];
+            [$lexer skipWhitespace];
+            $t = [$lexer nextToken];
+            if ($t !is $null) { throw "Trailing data after JSON value"; }
+            return $v;
+        },
+        parseElem => {
+            local('$t $kind');
+            $t = [$lexer nextToken];
+            $kind = [$Type: $t];
+            if ($kind == $KIND_OCURLY) { return [$this parseObject]; }
+            if ($kind == $KIND_OBRACKET) { return [$this parseArray]; }
+            if ($KIND_STRING <= $kind && $kind <= $KIND_NULL) { return [$Value: $t]; }
+            throw "Unxpected token: " . $kind;
+        },
+        parseObject => {
+            local('$t $key $value %obj')
+            $t = [$lexer nextToken];
+            if ($t is $null) { throw "EOF: Object is not closed"; }
+            while([$Type: $t] != $KIND_CCURLY) {
+                if ([$Type: $t] != $KIND_STRING) { throw "Expected a string for the object key, got " . $t['type']; }
+                $key = [$Value: $t];
+                [$lexer expectToken: $KIND_COLON];
+                %obj[$key] = [$this parseElem];
+
+                $t = [$lexer nextToken];
+                if ([$Type: $t] == $KIND_COMMA) { $t = [$lexer nextToken]; }
+            }
+            return %obj;
+        },
+        parseArray => {
+            local('$t $key $value @arr')
+            $t = [$lexer peekToken];
+            if ($t is $null) { throw "EOF: Array is not closed"; }
+            while([$Type: $t] != $KIND_CBRACKET) {
+                push(@arr, [$this parseElem]);
+                $t = [$lexer peekToken];
+                if ([$Type: $t] == $KIND_COMMA) { [$lexer nextToken]; $t = [$lexer peekToken]; }
+            }
+            [$lexer nextToken];
+            return @arr;
+        }
+    );
+
+    return [$withTokenKind: lambda($dispatcher,
+        %FN => %parser,
+        $lexer => [$withTokenKind: lambda($dispatcher,
+            %FN => %lexer,
+            $input => $null,
+            $cursor => 0,
+            $line => 1,
+            $col  => 1
+        )]
+    )];
+}
+
+# JsonSerializer: Produces JSON text from Sleep data structures (inverse of JsonParser)
+sub Sleep2Json {
+    local('$serializer %serializer $dispatcher');
+
+    $dispatcher = { return invoke(%FN[$0], @_, $0, \$this); };
+
+    %serializer = %(
+        stringify => {
+            return [$this stringifyValue: $1];
+        },
+        stringifyValue => {
+            local('$value $type $scalar $scalarLower');
+            $value = $1;
+
+            if ($value is $null) {
+                return "null";
+            }
+
+            $type = typeOf($value);
+
+            if (-ishash $value) {
+                return [$this stringifyObject: $value];
+            }
+            if (-isarray $value) {
+                return [$this stringifyArray: $value];
+            }
+
+            $scalar = $value . "";
+            $scalarLower = [$scalar toLowerCase];
+            
+            if (__json_is_number($scalar)) {
+                return $scalar;
+            }
+
+            if ($scalarLower eq "true") {
+                return "true";
+            }
+            if ($scalarLower eq "false") {
+                return "false";
+            }
+
+            return [$this stringifyString: $scalar];
+        },
+        stringifyObject => {
+            local('$object $result $first $key $value');
+            $object = $1;
+            $result = "{";
+            $first = 1;
+
+            foreach $key => $value ($object) {
+                if ($first == 0) {
+                    $result = $result . ",";
+                }
+                $first = 0;
+                $result = $result . [$this stringifyString: $key] . ":" . [$this stringifyValue: $value];
+            }
+
+            $result = $result . "}";
+            return $result;
+        },
+        stringifyArray => {
+            local('$array $result $first $item');
+            $array = $1;
+            $result = "[";
+            $first = 1;
+
+            foreach $item ($array) {
+                if ($first == 0) {
+                    $result = $result . ",";
+                }
+                $first = 0;
+                $result = $result . [$this stringifyValue: $item];
+            }
+
+            $result = $result . "]";
+            return $result;
+        },
+        stringifyString => {
+            local('$str $out $i $len $c $code %esc');
+            
+            # Escape lookup table
+            %esc = %(
+                "\"" => "\\\"",
+                "\\" => "\\\\",
+                "/"  => "\\/",
+                "\n" => "\\n",
+                "\r" => "\\r",
+                "\t" => "\\t"
+            );
+            
+            $str = $1 . "";
+            $len = strlen($str);
+            $out = "\"";
+
+            for ($i = 0; $i < $len; $i++) {
+                $c = charAt($str, $i);
+                $code = asc($c);
+
+                if ($c in %esc) {
+                    $out .= %esc[$c];
+                }
+                else if ($code < 32 || $code > 126) {
+                    # non-ASCII → encode as \uXXXX
+                    $out .= "\\u" . __json_hex($code);
+                }
+                else {
+                    $out .= $c;
+                }
+            }
+
+            return $out . "\"";
+        }
+    );
+
+    return lambda($dispatcher,
+        %FN => %serializer
+    );
+}
+
+# Helper to convert an integer to a zero-padded hexadecimal string
+sub __json_hex {
+    local('$num $hex $digits $digit');
+    $num = $1;
+    $digits = "0123456789abcdef";
+    $hex = "";
+
+    if ($num == 0) {
+        $hex = "0";
+    }
+    else {
+        while ($num > 0) {
+            $digit = $num % 16;
+            $hex = substr($digits, $digit, $digit + 1) . $hex;
+            $num = ($num - $digit) / 16;
+        }
+    }
+
+    while (strlen($hex) < 4) {
+        $hex = "0" . $hex;
+    }
+
+    return substr($hex, strlen($hex) - 4, strlen($hex));
+}
+
+sub __json_is_number {
+    local('$text $t');
+    $text = $1;
+    if ($text is $null) {
+        return 0;
+    }
+    $t = typeOf($text);
+    return iff(($t eq "class sleep.engine.types.LongValue") || ($t eq "class sleep.engine.types.DoubleValue"),1,0);
+}
+
+# Convenience wrapper for callers who just want the JSON text
+sub sleep_to_json {
+    local('$data $serializer');
+    $data = $1;
+    $serializer = Sleep2Json();
+    return [$serializer stringify: $data];
+}
+
+#### BEACON FUNCTIONS ####
+
 $active_users = "";
 
 # csusersinfo function
 sub csusersinfo {
-	foreach %csuser (users()) {
-		$active_users .= "- " . %csuser . "\n\n";
-	}
-}	
+    local('%csuser');
+    foreach %csuser (users()) {
+        $active_users .= "- " . %csuser . "\n\n";
+    }
+}    
 
-# New Beacon Alert
+
 on beacon_initial {
+    local('$message_data $user $computer $host $arch $external $internal $listener $process $pid');
+    println("New Beacon Detected!");
     $user = beacon_data($1)["user"];
     $computer = beacon_data($1)["computer"];
     $host = beacon_data($1)["host"];
@@ -25,29 +437,222 @@ on beacon_initial {
     $process = beacon_data($1)["process"];
     $pid = beacon_data($1)["pid"];
     
-    @curl_command = @('curl','-X','POST','-H', 'Content-Type: application/json', '-d', '{"text": "New Beacon on '.$teamserver_hostname.'. GameOn!\n\nInitial beacon from '.$user.'@'.$host.' ('. $computer .')\n\n--Beacon Details--\n\nExternal: '.$external.'\n\nInternal: '.$internal.'\n\nListener: '.$listener.'\n\nUser: '.$user.'\n\nComputer: '.$computer.'\n\nProccess: '.$process.'\n\nPid: '.$pid.'\n\nArch: '.$arch.'"}', $teams_webhookURL);
-    exec(@curl_command);
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => "New Beacon on " . $teamserver_hostname . ". GameOn!",
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "auto",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "Image",
+                                            url => "data:image/png;base64,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",
+                                            height => "56px",
+                                            altText => "Logo",
+                                            style => "RoundedCorners"
+                                        )
+                                    )
+                                ),
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => "New Beacon on " . $teamserver_hostname . ". GameOn!",
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        ),
+                                        %(
+                                            type => "TextBlock",
+                                            text => "Initial beacon from " . $user . " @ " . $host . " (" . $computer . ")",
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "Beacon Details:",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "FactSet",
+                            facts => @(
+                                %(
+                                    title => "External",
+                                    value => $external
+                                ),
+                                %(
+                                    title => "Internal",
+                                    value => $internal
+                                ),
+                                %(
+                                    title => "Listener",
+                                    value => $listener
+                                ),
+                                %(
+                                    title => "User",
+                                    value => $user
+                                ),
+                                %(
+                                    title => "Computer",
+                                    value => $computer
+                                ),
+                                %(
+                                    title => "Process",
+                                    value => $process
+                                ),
+                                %(
+                                    title => "PID",
+                                    value => $pid
+                                ),
+                                %(
+                                    title => "Architecture",
+                                    value => $arch
+                                )
+                            )
+                        )
+                        
+                    )
+                )
+            )
+        )
+    );
+    
+    sendMessage($message_data);
+    
+    
 }
 
 # New CS Client Connected Alert
 on event_join {
     # Call function named csusersinfo
-	csusersinfo();
+    local('$message_data');
+    csusersinfo();
+    
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => $1 . " has connected to " . $teamserver_hostname ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => $1 . " has connected to " . $teamserver_hostname,
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "Current Active Users",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => $active_users,
+                            wrap => "true"
+                        ),
+                        
+                    )
+                )
+            )
+        )
+    );
+    
+    sendMessage($message_data);
 
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "'.$1.' has connected to '.$teamserver_hostname.'!\n\nActive CS users:\n\n'.$active_users.'"}', $teams_webhookURL);
-    exec(@curl_command);
 
     # Clean the variable
-	$active_users = "";
+    $active_users = "";
 }
 
 # New CS Client Disconnected Alert
 on event_quit {
     # Call function named csusersinfo
-	csusersinfo();
+    local('$message_data');
+    csusersinfo();
+    
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => $1 . " has disconnected from " . $teamserver_hostname ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => $1 . " has disconnected from " . $teamserver_hostname,
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "Current Active Users",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => $active_users,
+                            wrap => "true"
+                        ),
+                        
+                    )
+                )
+            )
+        )
+    );
 
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "'.$1.' has disconnected to '.$teamserver_hostname.'!\n\nActive CS users:\n\n'.$active_users.'"}', $teams_webhookURL);
-    exec(@curl_command);
+    sendMessage($message_data);
+
 
     # Clean the variable
     $active_users = "";
@@ -55,36 +660,270 @@ on event_quit {
 
 # CS Client Public Message Event Alert
 on event_public {
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "New public message from: '.$1.'\n\nMessage content:\n\n '.$2.'"}', $teams_webhookURL);
-    exec(@curl_command);
+    local('$message_data');
+    
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => "New public message from: ".$1 ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => "New public message from: ".$1,
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "Message Content",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => $2,
+                            wrap => "true"
+                        ),
+                        
+                    )
+                )
+            )
+        )
+    );
+
+    sendMessage($message_data);
 }
 
 # New Site Event Log Alert
 on event_newsite {
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "'.$1.' set up a new site on '.$teamserver_hostname.'!\n\nNew site details:\n\n'.$2.'"}', $teams_webhookURL);
-    exec(@curl_command);
+    local('$message_data');
+    
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => $1." set up a new site on ".$teamserver_hostname ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => $1." set up a new site on ".$teamserver_hostname,
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "New site details",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => $2,
+                            wrap => "true"
+                        ),
+                        
+                    )
+                )
+            )
+        )
+    );
+
+    sendMessage($message_data);
 }
 
 # New Keystrokes Alert
 on keystrokes {
+    local('$message_data $keyuser $keytitle');
     $keyuser = $1['user'];
     $keytitle = $1['title'];
     
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "Received new Keystrokes from '.$keytitle.' by '.$keyuser.'!"}', $teams_webhookURL);
-    exec(@curl_command);
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => "Received new Keystrokes from ".$keytitle." by ".$keyuser."!" ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => "Received new Keystrokes from ".$keytitle." by ".$keyuser."!",
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    );
+
+    sendMessage($message_data);
 }
 
 # New Web Hit Alert
 on web_hit {
-    @curl_command = @('curl','-X','POST', '-H', 'Content-Type: application/json', '-d', '{"text": "New Web hit!\n\n--Web Log Details--\n\nFrom: '.$3.'\n\nRequest: '.$1.' '.$2.'\n\nResponse: '.$5.'\n\nUser-Agent: '.$4.'"}',$teams_webhookURL);
-    exec(@curl_command);
+    local('$message_data');
+    
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => "New Web hit!" ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => "New Web hit!",
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            ),
+                        ),
+                        %(
+                            type => "TextBlock",
+                            text => "Web Log Details",
+                            wrap => "true",
+                            weight => "Bolder"
+                        ),
+                        %(
+                            type => "FactSet",
+                            facts => @(
+                                %(
+                                    title => "From",
+                                    value => $3
+                                ),
+                                %(
+                                    title => "Request",
+                                    value => $1
+                                ),
+                                %(
+                                    title => "Response",
+                                    value => $5
+                                ),
+                                %(
+                                    title => "User-Agent",
+                                    value => $4
+                                )
+                            )
+                        )
+                        
+                    )
+                )
+            )
+        )
+    );
+
+    sendMessage($message_data);
 }
 
 # New Screenshot Alert
 on screenshots {
+    local('$message_data $screenuser $screentitle');
     $screenuser = $1['user'];
     $screentitle = $1['title'];
     
-    @curl_command = @('curl', '-X', 'POST', '-H', 'Content-Type: application/json', '-d', '{"text": "Received new screenshot of '.$screentitle.' by '.$screenuser.'!"}', $teams_webhookURL);
+    $message_data = %(
+        type => "message",
+        attachments => @(
+            %(
+                speak => "Received new screenshot of ".$screentitle." from ".$screenuser."!" ,
+                contentType => "application/vnd.microsoft.card.adaptive",
+                content => %(
+                    type => "AdaptiveCard",
+                    version => "1.5",
+                    body => @(
+                        %(
+                            type => "ColumnSet",
+                            columns => @(
+                                %(
+                                    type => "Column",
+                                    width => "stretch",
+                                    verticalContentAlignment => "Center",
+                                    items => @(
+                                        %(
+                                            type => "TextBlock",
+                                            text => "Received new screenshot of ".$screentitle." from ".$screenuser."!",
+                                            wrap => "true",
+                                            weight => "Bolder"
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    );
+
+    sendMessage($message_data);
+}
+
+sub sendMessage {
+    local('$message_data $body @curl_command $response_get');
+    $message_data = $1;
+    # Convert to JSON string properly
+    $body = sleep_to_json($message_data);
+    @curl_command = @('curl','-X','POST','-H', 'Content-Type: application/json', '-d', $body , $teams_webhookURL);
     exec(@curl_command);
 }
