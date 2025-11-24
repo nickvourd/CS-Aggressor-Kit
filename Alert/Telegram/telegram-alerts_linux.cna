@@ -1,0 +1,525 @@
+debug(7 | 34); # 34 is required for try/catch
+
+global('$telegram_API_URL $teamserver_hostname $token $chat_id $active_users');
+
+$teamserver_hostname = 'XXXXXX'; # Change this with your hostname
+$token = "XXXXXXXXX:XXXXXXXXXXXXXXXX"; # Change this with the token of your Telegram bot https://core.telegram.org/bots/tutorial
+$chat_id = "XXXXXXXXXXXXXX"; # Change this with your Telegram Channel or Group ID
+$telegram_API_URL = "https://api.telegram.org/bot" . $token . "/sendMessage"; # Do not change that URL
+
+#### AUXILIARY FUNCTIONS ####
+
+# Json2Sleep: Simple JSON parser that converts JSON strings to Sleep data structures
+# Arguments:
+#   $1: JSON string to parse
+# Returns: Sleep data structure (map/array)
+sub Json2Sleep {
+    local('$parser %parser $lexer %lexer $withTokenKind $dispatcher');
+
+    $dispatcher = { return invoke(%FN[$0], @_, $0, \$this); };
+
+    $withTokenKind = {
+        return let(
+            $1,
+            $KIND_OCURLY => 1, $KIND_CCURLY => 2, $KIND_OBRACKET => 3, $KIND_CBRACKET => 4, $KIND_COMMA => 5, $KIND_COLON => 6,
+            $KIND_STRING => 7, $KIND_NUMBER => 8, $KIND_TRUE => 9, $KIND_FALSE => 10, $KIND_NULL => 11,
+            $Token => { return @_; },
+            $Type =>  { return $1[0]; },
+            $Value => { return $1[1]; }
+        );
+    };
+
+    %lexer = %(
+        nextToken => {
+            local('$c');
+            [$this skipWhitespace];
+            $c = [$this peek];
+            if ($c is $null) {                        return $null; }
+            if ($c eq '{') { [$this chop];            return [$Token: $KIND_OCURLY]; }
+            if ($c eq '}') { [$this chop];            return [$Token: $KIND_CCURLY]; }
+            if ($c eq '[') { [$this chop];            return [$Token: $KIND_OBRACKET]; }
+            if ($c eq ']') { [$this chop];            return [$Token: $KIND_CBRACKET]; }
+            if ($c eq ',') { [$this chop];            return [$Token: $KIND_COMMA]; }
+            if ($c eq ':') { [$this chop];            return [$Token: $KIND_COLON]; }
+            if ($c eq 't') { [$this expect: "true"];  return [$Token: $KIND_TRUE, 1]; }
+            if ($c eq 'f') { [$this expect: "false"]; return [$Token: $KIND_FALSE, 0]; }
+            if ($c eq 'n') { [$this expect: "null"];  return [$Token: $KIND_NULL, $null]; }
+            if ($c eq '"') {                          return [$this lexString]; }
+            if ($c eq '-' || [$this isDigit: $c]) {   return [$this lexNumber]; }
+            throw "Unxpected char ' $+ $c $+ ' at $cursor";
+        },
+        peekToken => {
+            local('$t $old');
+            $old = $cursor;
+            $t = [$this nextToken];
+            $cursor = $old;
+            return $t;
+        },
+        expectToken => {
+            local('$t');
+            $t = [$this nextToken];
+            if ($t is $null) { throw "EOF: Expected $1";}
+            if ([$Type: $t] ne $1) { throw "Expected token $1 but got " . [$Type: $t]; }
+            return $t;
+        },
+        peek => {
+            if ($cursor < strlen($input)) {
+                return charAt($input, $cursor);
+            }
+            return $null;
+        },
+        chop => {
+            local('$c');
+            if ($cursor < strlen($input)) {
+                $c = charAt($input, $cursor);
+                $cursor++;
+                if ($c eq "\n") { $line++; $col = 1; } else { $col++; }
+                return $c;
+            }
+            return $null;
+        },
+        expect => {
+            local('$s');
+            if ($cursor + strlen($1) > strlen($input)) { throw "EOF: Expected ' $+ $1 $+ ' at $line $+ : $+ $col but got $+ ' $s $+ '"; }
+            $s = substr($input, $cursor, $cursor + strlen($1));
+            if ($s ne $1) { throw "Expected ' $+ $1 $+ ' at $line $+ : $+ $col but got $+ ' $s $+ '"; }
+            $cursor = $cursor + strlen($s);
+            $col += strlen($s);
+            return $s;
+        },
+        skipWhitespace => {
+            local('$c');
+            $c = [$this peek];
+            while ($c !is $null && $c ismatch '\r|\n|\t| ') {
+                [$this chop];
+                $c = [$this peek];
+            }
+        },
+        lexString => {
+            local('$c $start $hasEscapedChars $str');
+            $hasEscapedChars = 0;
+            $c = [$this chop];
+            $start = $cursor;
+            while(1) {
+                $c = [$this chop];
+                if ($c is $null)     { throw "EOF: String literal not closed"; }
+                else if ($c eq "\\") { [$this skipEscape]; $hasEscapedChars = 1; }
+                else if ($c eq '"')  { break; }
+            }
+            $str = substr($input, $start, $cursor - 1);
+            if ($hasEscapedChars) { $str = [$this unescapeString: $str]; }
+            return [$Token: $KIND_STRING, $str];
+        },
+        skipEscape => {
+            local('$c $i');
+            $c = [$this chop];
+            if ($c eq '"')  { return 1; }
+            if ($c eq "\\") { return 1; }
+            if ($c eq "/")  { return 1; }
+            if ($c eq "b")  { return 1; }
+            if ($c eq "f")  { return 1; }
+            if ($c eq "n")  { return 1; }
+            if ($c eq "r")  { return 1; }
+            if ($c eq "t")  { return 1; }
+            if ($c eq "u")  {
+               for ($i = 0; $i < 4; $i++)  {
+                    $c = [$this chop];
+                    if ($c !ismatch '[0-9a-fA-F]') { throw "Expected hex-digit but got: ' $+ $c $_ '"; }
+               }
+               return 1;
+            }
+            throw "Unkown escaped char: ' $+ $c $_ '";
+        },
+        lexNumber => {
+            local('$c $start $n');
+            $start = $cursor;
+            $c = [$this peek];
+            while ($c !is $null && $c ismatch '-|\d|\.') {
+                # TODO: Support floats. Sleep's parseNumber only parse integers
+                if ($c eq ".") { throw "Floats aren't supported"; }
+                [$this chop];
+                $c = [$this peek];
+            }
+            $n = parseNumber(substr($input, $start, $cursor), 10);
+            return [$Token: $KIND_NUMBER, $n];
+        },
+        isDigit => {
+            return iff(48 <= asc($1) && asc($1) <= 57, 1, 0);
+        },
+        unescapeString => {
+            local('$i @builder $len $c $hex');
+            $len = strlen($1);
+            for ($i = 0; $i < $len; $i++) {
+                $c = charAt($1, $i);
+                if ($c eq "\\" && ($i + 1) < $len) {
+                    $i++;
+                    $c = charAt($1, $i);
+                    if ($c eq '"')       { push(@builder, '"');  }
+                    else if ($c eq "\\") { push(@builder, "\\"); }
+                    else if ($c eq "/")  { push(@builder, "/");  }
+                    else if ($c eq "b")  { push(@builder, "\b"); }
+                    else if ($c eq "f")  { push(@builder, "\f"); }
+                    else if ($c eq "n")  { push(@builder, "\n"); }
+                    else if ($c eq "r")  { push(@builder, "\r"); }
+                    else if ($c eq "t")  { push(@builder, "\t"); }
+                    else if ($c eq "u")  {
+                        if (($i + 4) < $len) {
+                            $hex = substr($1, $i + 1, $i + 5);
+                            push(@builder, chr(parseNumber($hex, 16)));
+                            $i += 4;
+                        }
+                        else {
+                            throw "Bad \\u escape";
+                        }
+                    }
+                }
+                else {
+                    push(@builder, $c);
+                }
+            }
+            return join("", @builder);
+        },
+        init => {
+            $input = $1;
+            $cursor = 0;
+            $line = 1;
+            $col = 1;
+        }
+    );
+
+    %parser = %(
+        parse => {
+            local('$t $v');
+            [$lexer init: $1];
+            $v = [$this parseElem];
+            [$lexer skipWhitespace];
+            $t = [$lexer nextToken];
+            if ($t !is $null) { throw "Trailing data after JSON value"; }
+            return $v;
+        },
+        parseElem => {
+            local('$t $kind');
+            $t = [$lexer nextToken];
+            $kind = [$Type: $t];
+            if ($kind == $KIND_OCURLY) { return [$this parseObject]; }
+            if ($kind == $KIND_OBRACKET) { return [$this parseArray]; }
+            if ($KIND_STRING <= $kind && $kind <= $KIND_NULL) { return [$Value: $t]; }
+            throw "Unxpected token: " . $kind;
+        },
+        parseObject => {
+            local('$t $key $value %obj')
+            $t = [$lexer nextToken];
+            if ($t is $null) { throw "EOF: Object is not closed"; }
+            while([$Type: $t] != $KIND_CCURLY) {
+                if ([$Type: $t] != $KIND_STRING) { throw "Expected a string for the object key, got " . $t['type']; }
+                $key = [$Value: $t];
+                [$lexer expectToken: $KIND_COLON];
+                %obj[$key] = [$this parseElem];
+
+                $t = [$lexer nextToken];
+                if ([$Type: $t] == $KIND_COMMA) { $t = [$lexer nextToken]; }
+            }
+            return %obj;
+        },
+        parseArray => {
+            local('$t $key $value @arr')
+            $t = [$lexer peekToken];
+            if ($t is $null) { throw "EOF: Array is not closed"; }
+            while([$Type: $t] != $KIND_CBRACKET) {
+                push(@arr, [$this parseElem]);
+                $t = [$lexer peekToken];
+                if ([$Type: $t] == $KIND_COMMA) { [$lexer nextToken]; $t = [$lexer peekToken]; }
+            }
+            [$lexer nextToken];
+            return @arr;
+        }
+    );
+
+    return [$withTokenKind: lambda($dispatcher,
+        %FN => %parser,
+        $lexer => [$withTokenKind: lambda($dispatcher,
+            %FN => %lexer,
+            $input => $null,
+            $cursor => 0,
+            $line => 1,
+            $col  => 1
+        )]
+    )];
+}
+
+# JsonSerializer: Produces JSON text from Sleep data structures (inverse of JsonParser)
+sub Sleep2Json {
+    local('$serializer %serializer $dispatcher');
+
+    $dispatcher = { return invoke(%FN[$0], @_, $0, \$this); };
+
+    %serializer = %(
+        stringify => {
+            return [$this stringifyValue: $1];
+        },
+        stringifyValue => {
+            local('$value $type $scalar $scalarLower');
+            $value = $1;
+
+            if ($value is $null) {
+                return "null";
+            }
+
+            $type = typeOf($value);
+
+            if (-ishash $value) {
+                return [$this stringifyObject: $value];
+            }
+            if (-isarray $value) {
+                return [$this stringifyArray: $value];
+            }
+
+            $scalar = $value . "";
+            $scalarLower = [$scalar toLowerCase];
+            
+            if (__json_is_number($scalar)) {
+                return $scalar;
+            }
+
+            if ($scalarLower eq "true") {
+                return "true";
+            }
+            if ($scalarLower eq "false") {
+                return "false";
+            }
+
+            return [$this stringifyString: $scalar];
+        },
+        stringifyObject => {
+            local('$object $result $first $key $value');
+            $object = $1;
+            $result = "{";
+            $first = 1;
+
+            foreach $key => $value ($object) {
+                if ($first == 0) {
+                    $result = $result . ",";
+                }
+                $first = 0;
+                $result = $result . [$this stringifyString: $key] . ":" . [$this stringifyValue: $value];
+            }
+
+            $result = $result . "}";
+            return $result;
+        },
+        stringifyArray => {
+            local('$array $result $first $item');
+            $array = $1;
+            $result = "[";
+            $first = 1;
+
+            foreach $item ($array) {
+                if ($first == 0) {
+                    $result = $result . ",";
+                }
+                $first = 0;
+                $result = $result . [$this stringifyValue: $item];
+            }
+
+            $result = $result . "]";
+            return $result;
+        },
+        stringifyString => {
+            local('$str $out $i $len $c $code %esc');
+            
+            # Escape lookup table
+            %esc = %(
+                "\"" => "\\\"",
+                "\\" => "\\\\",
+                "/"  => "\\/",
+                "\n" => "\\n",
+                "\r" => "\\r",
+                "\t" => "\\t"
+            );
+            
+            $str = $1 . "";
+            $len = strlen($str);
+            $out = "\"";
+
+            for ($i = 0; $i < $len; $i++) {
+                $c = charAt($str, $i);
+                $code = asc($c);
+
+                if ($c in %esc) {
+                    $out .= %esc[$c];
+                }
+                else if ($code < 32 || $code > 126) {
+                    # non-ASCII → encode as \uXXXX
+                    $out .= "\\u" . __json_hex($code);
+                }
+                else {
+                    $out .= $c;
+                }
+            }
+
+            return $out . "\"";
+        }
+    );
+
+    return lambda($dispatcher,
+        %FN => %serializer
+    );
+}
+
+# Helper to convert an integer to a zero-padded hexadecimal string
+sub __json_hex {
+    local('$num $hex $digits $digit');
+    $num = $1;
+    $digits = "0123456789abcdef";
+    $hex = "";
+
+    if ($num == 0) {
+        $hex = "0";
+    }
+    else {
+        while ($num > 0) {
+            $digit = $num % 16;
+            $hex = substr($digits, $digit, $digit + 1) . $hex;
+            $num = ($num - $digit) / 16;
+        }
+    }
+
+    while (strlen($hex) < 4) {
+        $hex = "0" . $hex;
+    }
+
+    return substr($hex, strlen($hex) - 4, strlen($hex));
+}
+
+sub __json_is_number {
+    local('$text $t');
+    $text = $1;
+    if ($text is $null) {
+        return 0;
+    }
+    $t = typeOf($text);
+    return iff(($t eq "class sleep.engine.types.LongValue") || ($t eq "class sleep.engine.types.DoubleValue"),1,0);
+}
+
+# Convenience wrapper for callers who just want the JSON text
+sub sleep_to_json {
+    local('$data $serializer');
+    $data = $1;
+    $serializer = Sleep2Json();
+    return [$serializer stringify: $data];
+}
+
+#### BEACON FUNCTIONS ####
+
+$active_users = "";
+
+# csusersinfo function
+sub csusersinfo {
+    local('%csuser');
+    foreach %csuser (users()) {
+        $active_users .= "- " . %csuser . "\n\n";
+    }
+}  
+
+# -------------------------
+# EVENT: New Beacon
+# -------------------------
+on beacon_initial {
+    local('$user $computer $host $arch $external $internal $listener $process $pid $message_data $message_text $emoji');
+    println("New Beacon Detected!");
+    $user = beacon_data($1)["user"];
+    $computer = beacon_data($1)["computer"];
+    $host = beacon_data($1)["host"];
+    $arch = beacon_data($1)["barch"];
+    $external = beacon_data($1)["external"];
+    $internal = beacon_data($1)["internal"];
+    $listener = beacon_data($1)["listener"];
+    $process = beacon_data($1)["process"];
+    $pid = beacon_data($1)["pid"];
+    $message_text = "💀 New Beacon on <b>" . $teamserver_hostname . "</b> GameOn!<pre>Initial beacon from " . $user . " @ " . $host . " (" . $computer . ")</pre>\\n\\n<b>Beacon Details:</b>\\n<i>External</i>: ". $external ."\\n<i>Internal</i>: ". $internal ."\\n<i>Listener</i>: ". $listener ."\\n<i>User</i>: ". $user ."\\n<i>Computer</i>: ". $computer ."\\n<i>Process</i>: ". $process ."\\n<i>PID</i>: ". $pid ."\\n<i>Architecture</i>: ". $arch; 
+    sendMessage($message_text);
+}
+
+# -------------------------
+# EVENT: Operator connected
+# -------------------------
+on event_join {
+    csusersinfo();
+    local('$message_text');
+    $message_text = "⚠️ <b>" . $1 . "</b> connected to <b>" . $teamserver_hostname . "</b>\\n\\n<b>Active CS users:</b>\\n" . $active_users;
+    sendMessage($message_text);
+    $active_users = "";
+}
+
+# -------------------------
+# EVENT: Operator disconnected
+# -------------------------
+on event_quit {
+    csusersinfo();
+    local('$message_text');
+    $message_text = "⚠️ <b>" . $1 . "</b> disconnected from <b>" . $teamserver_hostname . "</b>\\n\\n<b>Active CS users:</b>\\n" . $active_users;
+    sendMessage($message_text);
+    $active_users = "";
+}
+
+# -------------------------
+# EVENT: Public message
+# -------------------------
+on event_public {
+    local('$message_text');
+    $message_text = "💬 Public message from <b>" . $1 . "</b>\\n\\nMessage content:\\n" . $2;
+    sendMessage($message_text);
+}
+
+# -------------------------
+# EVENT: New site
+# -------------------------
+on event_newsite {
+    local('$message_text');
+    $message_text = "🛠️ <b>" . $1 . "</b> created a new site on <b>" . $teamserver_hostname . "</b>!\\n\\ℹ️ Site details:\\n" . $2;
+    sendMessage($message_text);
+}
+
+# -------------------------
+# EVENT: Keystrokes
+# -------------------------
+on keystrokes {
+    local('$emoji $message_text');
+    $message_text = "⌨️ Keystrokes captured from <b>" . $1["title"] . "(" . $1["user"] . ")</b>!";
+    sendMessage($message_text);
+}
+
+# -------------------------
+# EVENT: Web hit
+# -------------------------
+on web_hit {
+    local('$emoji $message_text');
+    $message_text = "🔔 <b>New Web Hit!</b>\\n\\ℹ️ <i>From</i>: " . $3 . "\\n<i>Request</i>: " . $1 . " " . $2 . "\\n<i>Response</i>: " . $5 . "\\n<i>User-Agent</i>: " . $4 . "\\n";
+    sendMessage($message_text);
+}
+
+# -------------------------
+# EVENT: Screenshot
+# -------------------------
+on screenshots {
+    local('$emoji $message_text');
+    $emoji = "📸 ";
+    $message_text = $emoji . " Screenshot captured <b>" . $1["title"] . " by " . $1["user"] . "</b>!";
+    sendMessage($message_text);
+}
+
+sub sendMessage {
+    local('$message_text $message_data $body $response @curl_command');
+    $message_text = $1;
+    $message_data = %(  
+                        chat_id => $chat_id,
+                        parse_mode => "HTML",
+                        text => $message_text,
+                        disable_web_page_preview => "true",
+                        disable_notification => "false"
+                    );
+    # Convert to JSON string properly
+    $body = sleep_to_json($message_data);
+    @curl_command = @('curl','-X','POST','-H', 'Content-Type: application/json', '-d', $body , $telegram_API_URL);
+    exec(@curl_command);
+}
