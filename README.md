@@ -90,7 +90,7 @@ The following table illustrates all the CNA files included in this project:
 
 ## Alert
 
-These CNA files will notify you via the `Slack`/`Discord`/`Teams`/`Mattermost`/`Signal`/`iMessage` applications when:
+These CNA files will notify you via the `Slack`/`Discord`/`Teams`/`Mattermost`/`Signal`/`iMessage`/`Telegram` applications when:
 
 - A new client connects to the team server.
 - A CS client disconnects from the team server.
