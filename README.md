@@ -85,7 +85,7 @@ The following table illustrates all the CNA files included in this project:
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
 | SA | [File-Color.cna](/SA/File-Color.cna) | This CNA file outputs files in a colorful format for file hunting |
 | SA | [PS-Color.cna](/SA/PS-Color.cna) | This CNA file outputs proccess in a colorful format for process hunting |
-| Utils | [Sonata.cna](/Utils/Sonata.cna) | This CNA file is a port of the [Sonata](https://github.com/nickvourd/Sonata) tool. Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
+| Utils | [Sonata.cna](/Utils/Sonata.cna) | Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
 | Utils | [locate.cna](/Utils/locate.cna) | This CNA functions like the `locate` Linux command. Additionally, it performs case-insensitive keyword searches. This CNA requires a Linux CS client |
 
 ## Alert
