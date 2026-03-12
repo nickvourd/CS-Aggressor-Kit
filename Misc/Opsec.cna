@@ -166,7 +166,9 @@ foreach $key (sorta(keys(%commands))) {
 # Add opsec command to check current settings
 beacon_command_register("opsec", "Show the settings of the loaded opsec profile",
     "Synopsis: opsec\n\n" .
-    "Displays a list of command settings for the currently loaded opsec profile.");
+    "Displays a list of command settings for the currently loaded opsec profile.",
+    "housekeeping"
+);
 
 alias("opsec", {
     blog($1, "The current opsec profile has the following command settings:");
