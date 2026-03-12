@@ -83,6 +83,7 @@ The following table illustrates all the CNA files included in this project:
 | Misc | [Beacon-Name-Tab-Colors.cna](/Misc/Beacon-Name-Tab-Colors.cna) | This CNA file modifies the Beacon tab name format from the default to `username`@`hostname` (`pid`), for admin's beacon the color is red, for user's beacon the color is green |
 | Misc | [CS-All-Tabs-Bold.cna](/Misc/CS-All-Tabs-Bold.cna) | This CNA file makes all CS client tabs bold |
 | Misc | [CWD-Beacon-Bar.cna](/Misc/CWD-Beacon-Bar.cna) | This CNA file enhances Beacon console status bar to display the Beacon's last known working directory path. Additionally, improves the 'cd' command to support restoring the previous directory path seamlessly (Usage: `cd -`) |
+| Misc | [Opsec.cna](/Misc/Opsec.cna) | This CNA file allows and blocks default Cobalt Strike commands to improve the opsec. |
 | SA | [File-Color.cna](/SA/File-Color.cna) | This CNA file outputs files in a colorful format for file hunting |
 | SA | [PS-Color.cna](/SA/PS-Color.cna) | This CNA file outputs proccess in a colorful format for process hunting |
 | Utils | [Sonata.cna](/Utils/Sonata.cna) | Sonata is a file hash calculator that supports MD5, SHA1, SHA256, and SHA512 algorithms. The CNA port enhances functionality by supporting string hash calculations as well |
@@ -357,7 +358,7 @@ Finally, when you have an Administrator's Beacon, the hostname of the target mac
 
 ### Opsec Example
 
-This CNA file alows and blocks default Cobalt Strike commands to improve the opsec.
+This CNA file allows and blocks default Cobalt Strike commands to improve the opsec.
 
 ## SA
 
