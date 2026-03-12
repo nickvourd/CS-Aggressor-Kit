@@ -8,7 +8,8 @@ global('%OPERATING_BEACONS');
 beacon_command_register(
     "cd",
     "Change directory on host. Use '-' to get back to previous cwd.",
-    "Use: cd [directory]\n\nChange directory on host. Use '-' to get back to previous cwd."
+    "Use: cd [directory]\n\nChange directory on host. Use '-' to get back to previous cwd.",
+    "housekeeping"
 );
 
 set BEACON_SBAR_LEFT { 
