@@ -13,7 +13,7 @@ Homemade Aggressor scripts kit for Cobalt Strike
 
 ## Description
 
-This repository contains numerous CNA files (Aggressor Scripts) for Cobalt Strike, which are useful during a Red Team engagement. Many of these CNA files have been inspired by other well-known repositories.
+This repository contains numerous CNA files (Aggressor Scripts) for Cobalt Strike, which are useful during a Red Team engagement.
 
 This project created with ❤️ by [@nickvourd](https://x.com/nickvourd).
 
