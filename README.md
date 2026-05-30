@@ -19,6 +19,8 @@ This project created with ❤️ by [@nickvourd](https://x.com/nickvourd).
 
 Special thanks to [Will Nowlan](https://www.linkedin.com/in/will-nowlan-87b18a1bb/) for all his contributions.
 
+ℹ️ This tool has been selected and it is proudly part of the [Cobalt Strike Community Kit](https://cobalt-strike.github.io/community_kit/).
+
 ## Table of Contents
 - [CS-Aggressor-Kit](#cs-aggressor-kit)
   - [Description](#description)
