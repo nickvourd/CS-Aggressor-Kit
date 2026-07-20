@@ -1,6 +1,8 @@
 #Author: @nickvourd
 #Inspired by https://github.com/mgeeky/cobalt-arsenal of @mariuszbit
 # Format string for beacon tab names - supports placeholders like <user>, <computer>, etc.
+#Not Supported in CS 4.13 version
+
 $beacon_tab_name_format = "<user>@<computer> (<pid>)";
 
 # Execute once on startup using heartbeat_1s
