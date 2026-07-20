@@ -1,6 +1,8 @@
 #Author: @nickvourd
 # Function to make all tabs bold
 # This function is called on script load and periodically
+# Not Supported in CS 4.13 version
+
 sub makeAllTabsBold {
     local('$client $apptabs $i $applicationTab');
     
